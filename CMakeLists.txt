@@ -21,3 +21,11 @@ add_library (argparser argparser.c)
 
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
+
+enable_testing()
+
+add_test(NAME test_1 COMMAND test_main 1)
+set_tests_properties(test_1 PROPERTIES WILL_FAIL TRUE)
+
+add_test(NAME test_2 COMMAND test_main 1 2.6)
+add_test(NAME test_3 COMMAND test_main 2.5 2.5 5)

@@ -63,7 +63,7 @@ typedef struct global_args {
 	generic_type *list;
 } global_args;
 
-// Expand functions to add arguments to parse.
+// Expandable macros to add arguments to parse.
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME]);
 TYPES
 #undef F
@@ -76,5 +76,5 @@ TYPES
 void init_args (int argc, char **argv);
 void print_gt(generic_type * in);
 void report_args ();
-
+void free_args ();
 #endif

@@ -29,5 +29,7 @@ int main(int argc, char *argv[])
 	int o_int = create_optional_gt_int ("oint", -1);
 
 	report_args ();
+
+	free_args ();
 	return 0;
 }

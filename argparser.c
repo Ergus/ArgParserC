@@ -23,7 +23,7 @@ static global_args *sing = NULL;
 	{								\
 		if (sing->it >= sing->argc) {				\
 			fprintf (stderr, "Error: no enough arguments to set %s\n", name); \
-			abort ();					\
+			exit (1);						\
 		}							\
 		const size_t it = sing->it++;				\
 		const T val = C(sing->argv[it]);			\
@@ -90,14 +90,16 @@ void print_gt(generic_type * in)
 	}
 }
 
-void report_args ()
+void free_args ()
 {
-	for (size_t i = 0; i < sing->it; ++i) {
-		print_gt (&(sing->list[i]));
-	}
-
 	free(sing->list);
 	free(sing);
+}
+
+void report_args ()
+{
+	for (size_t i = 0; i < sing->it; ++i)
+		print_gt (&(sing->list[i]));
 }
 
 
