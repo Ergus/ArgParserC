@@ -30,7 +30,10 @@
 
 typedef char * char_p;
 
-
+/* The types must have 3 arguments:
+   1) type
+   2) format for printf without %, should not be repeated
+   3) function to convert from char) */
 #define TYPES					\
 	F(int, d, atoi)				\
 	F(double, lf, atof)			\
@@ -52,10 +55,7 @@ typedef struct generic_type {
 	} value;
 } generic_type;
 
-void print_gt(generic_type * in);
-
 // Arguments part
-
 typedef struct global_args {
 	int argc;
 	char **argv;
@@ -63,7 +63,7 @@ typedef struct global_args {
 	generic_type *list;
 } global_args;
 
-
+// Expand functions to add arguments to parse.
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME]);
 TYPES
 #undef F
@@ -72,7 +72,7 @@ TYPES
 TYPES
 #undef F
 
-
+// Manual functions
 void init_args (int argc, char **argv);
 void print_gt(generic_type * in);
 void report_args ();

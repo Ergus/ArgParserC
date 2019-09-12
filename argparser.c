@@ -22,7 +22,7 @@ static global_args *sing = NULL;
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME])		\
 	{								\
 		if (sing->it >= sing->argc) {				\
-			fprintf (stderr, "Error: no enough arguments\n"); \
+			fprintf (stderr, "Error: no enough arguments to set %s\n", name); \
 			abort ();					\
 		}							\
 		const size_t it = sing->it++;				\
@@ -44,9 +44,9 @@ TYPES
 	{								\
 		T val = def;						\
 		const size_t it = sing->it++;				\
-		if (it < sing->argc) {				\
+									\
+		if (it < sing->argc)					\
 			val = C(sing->argv[it]);			\
-		}							\
 									\
 		generic_type *out = &(sing->list[it]);			\
 									\
