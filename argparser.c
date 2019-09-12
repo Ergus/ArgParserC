@@ -19,13 +19,39 @@
 
 static global_args *sing = NULL;
 
-#define F(T,F,C) T create_gt_##T (char *input)				\
+#define F(T,F,C) T create_gt_##T (const char name[MAXNAME])		\
 	{								\
-		const T val = C(input);					\
+		if (sing->it >= sing->argc) {				\
+			fprintf (stderr, "Error: no enough arguments\n"); \
+			abort ();					\
+		}							\
 		const size_t it = sing->it++;				\
+		const T val = C(sing->argv[it]);			\
 		generic_type *out = &(sing->list[it]);			\
 									\
 		out->type = type_##T ;					\
+		strncpy (out->name, name, MAXNAME);			\
+		out->value.F = val;					\
+									\
+		return val;						\
+	}
+
+TYPES
+#undef F
+
+#define F(T,F,C)							\
+	T create_optional_gt_##T (const char name[MAXNAME], T def)	\
+	{								\
+		T val = def;						\
+		const size_t it = sing->it++;				\
+		if (it < sing->argc) {				\
+			val = C(sing->argv[it]);			\
+		}							\
+									\
+		generic_type *out = &(sing->list[it]);			\
+									\
+		out->type = type_##T ;					\
+		strncpy (out->name, name, MAXNAME);			\
 		out->value.F = val;					\
 									\
 		return val;						\
@@ -46,7 +72,7 @@ void init_args(int argc, char **argv)
 		fprintf(stderr, "Arguments can be  initialized only once.");
 		exit(EXIT_FAILURE);
 	}
-	create_gt_char_p (argv[0]);
+	create_gt_char_p ("Executable");
 }
 
 void print_gt(generic_type * in)
@@ -54,7 +80,8 @@ void print_gt(generic_type * in)
 	switch (in->type) {
 		#define F(T,F,C)					\
 			case ( type_##T ):				\
-				printf ("%" #F "\n", in->value.F );		\
+				printf ("%s: %" #F "\n",			\
+					in->name, in->value.F );	\
 				break;
 		TYPES
 		#undef F

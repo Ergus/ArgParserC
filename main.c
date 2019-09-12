@@ -23,8 +23,10 @@ int main(int argc, char *argv[])
 {
 	init_args (argc, argv);
 
-	int v_int = create_gt_int (argv[1]);
-	int v_double = create_gt_double (argv[2]);
+	int v_int = create_gt_int ("vint");
+	double v_double = create_gt_double ("vdouble");
+
+	int o_int = create_optional_gt_int ("oint", -1);
 
 	report_args ();
 	return 0;

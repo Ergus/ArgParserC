@@ -26,6 +26,7 @@
 #include <string.h>
 
 #define MAXLIST 16
+#define MAXNAME 32
 
 typedef char * char_p;
 
@@ -43,6 +44,7 @@ typedef enum type_t {
 
 typedef struct generic_type {
 	type_t type;
+	char name[MAXNAME];
 	union {
 		#define F(t,f,...) t f;
 		TYPES
@@ -62,7 +64,11 @@ typedef struct global_args {
 } global_args;
 
 
-#define F(T,F,C) T create_gt_##T (char *input);
+#define F(T,F,C) T create_gt_##T (const char name[MAXNAME]);
+TYPES
+#undef F
+
+#define F(T,F,C) T create_optional_gt_##T (const char name[MAXNAME], T def);
 TYPES
 #undef F
 
