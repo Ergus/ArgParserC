@@ -19,44 +19,63 @@
 
 static global_args *sing = NULL;
 
-#define list_for(T)					\
-	void init_##T##_list (T##_list *in, int max)	\
-	{						\
-		in->list = calloc (max, sizeof (T));	\
-		in->max = max;				\
-		in->count = 0;				\
-	}						\
-							\
-	bool push_##T##_list (T##_list *in, T *value)	\
-	{						\
-		if (in->count + 1 >= in->max)		\
-			return false;			\
-							\
-		in->list[in->count++] = *value;		\
-		return true;				\
-	}						\
-							\
-	void free_##T##_list (T##_list *in)		\
-	{						\
-		free (in->list);			\
-	}						\
-							\
-							\
-	T *get_##T##_list (T##_list *in, int idx)	\
-	{						\
-		if (idx < 0 || idx >= in->count)	\
-			return NULL;			\
-		return &in->list[idx];			\
-	}						\
+// List containers
+#define list_for(T)							\
+	void init_##T##_list (T##_list *in, int max_size)		\
+	{								\
+		in->list = (T *) calloc (max_size, sizeof (T));		\
+		in->max_size = max_size;				\
+		in->count = 0;						\
+	}								\
+									\
+	bool push_##T##_list (T##_list *in, T *value)			\
+	{								\
+		if (in->count + 1 >= in->max_size) {			\
+			in->max_size *= 2;				\
+			in->list = realloc(in->list, in->max_size * sizeof(T)); \
+			if (!in->list)					\
+				return false;				\
+		}							\
+									\
+		in->list[in->count++] = *value;				\
+		return true;						\
+	}								\
+									\
+	void free_##T##_list (T##_list *in)				\
+	{								\
+		free (in->list);					\
+	}								\
+									\
+									\
+	T *get_##T##_list (T##_list *in, int idx)			\
+	{								\
+		if (idx < 0 || idx >= in->count)			\
+			return NULL;					\
+		return &in->list[idx];					\
+	}								\
 	T *begin_##T##_list (T##_list *in) {return in->list;};		\
 	T *end_##T##_list (T##_list *in) {return &in->list[in->count];}; \
-
 
 list_for(generic_type);
 #undef list_for
 
+// The rest
+#define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val) \
+	{								\
+		out->type = type_##T ;					\
+		strncpy (out->name, name, MAXNAME);			\
+		out->value.F = val;					\
+	}
+TYPES
+#undef F
+
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME])		\
 	{								\
+		if (sing->args_it >= MAXLIST) {				\
+			fprintf (stderr,				\
+			         "Error: No more than %d CL arguments are permited\n", \
+			         MAXLIST);				\
+		}							\
 		if (sing->args_it >= sing->argc) {			\
 			fprintf (stderr,				\
 			         "Error: no enough CL arguments to set %s (arg: %d) \n", \
@@ -64,18 +83,14 @@ list_for(generic_type);
 			exit (1);					\
 		}							\
 									\
-		const size_t it = sing->args_it++;			\
-		const T val = C(sing->argv[it]);			\
+		const T val = C(sing->argv[sing->args_it++]);		\
 									\
 		generic_type out;					\
-		out.type = type_##T ;					\
-		strncpy (out.name, name, MAXNAME);			\
-		out.value.F = val;					\
+		set_gt_##T (&out, name, val);				\
 		push_generic_type_list (sing->args_list, &out);	\
 									\
 		return val;						\
 	}
-
 TYPES
 #undef F
 
@@ -83,24 +98,21 @@ TYPES
 	T create_optional_gt_##T (const char name[MAXNAME], T def)	\
 	{								\
 		T val = def;						\
-		const size_t it = sing->args_it++;				\
+		const size_t it = sing->args_it++;			\
 									\
 		if (it < sing->argc)					\
 			val = C(sing->argv[it]);			\
 									\
 		generic_type out;					\
-									\
-		out.type = type_##T ;					\
-		strncpy (out.name, name, MAXNAME);			\
-		out.value.F = val;					\
-		push_generic_type_list (sing->args_list, &out);	\
+		set_gt_##T (&out, name, val);				\
+		push_generic_type_list (sing->args_list, &out);		\
 									\
 		return val;						\
 	}
-
 TYPES
 #undef F
 
+// Implemented (no generated) functions.
 void init_args(int argc, char **argv)
 {
 	if (!sing) {
@@ -110,11 +122,12 @@ void init_args(int argc, char **argv)
 		sing->args_it = 0;
 		sing->args_list = (generic_type_list *) malloc (sizeof(generic_type_list));
 		init_generic_type_list (sing->args_list, MAXLIST);
+
+		create_gt_char_p ("Executable");
 	} else {
 		fprintf(stderr, "Arguments can be  initialized only once.");
 		exit(EXIT_FAILURE);
 	}
-	create_gt_char_p ("Executable");
 }
 
 void print_gt(generic_type * in)
@@ -122,7 +135,7 @@ void print_gt(generic_type * in)
 	switch (in->type) {
 		#define F(T,F,C)					\
 			case ( type_##T ):				\
-				printf ("%s: %" #F "\n",			\
+				printf ("%s: %" #F "\n",		\
 					in->name, in->value.F );	\
 				break;
 		TYPES
@@ -146,6 +159,3 @@ void report_args ()
 	     it != end; ++it)
 		print_gt (it);
 }
-
-
-

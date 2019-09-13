@@ -24,12 +24,14 @@ int main(int argc, char *argv[])
 	init_args (argc, argv);
 
 	int v_int = create_gt_int ("vint");
+	char *v_char_p = create_gt_char_p ("vchar_p");
 	double v_double = create_gt_double ("vdouble");
 
 	int o_int = create_optional_gt_int ("oint", -1);
+	int o_double = create_optional_gt_double ("odouble", 0.5);
+	char *o_char = create_optional_gt_char_p ("ochar_p", NULL);
 
 	report_args ();
-
 	free_args ();
 	return 0;
 }

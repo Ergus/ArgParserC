@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef ARGPARSE_H
 #define ARGPARSE_H
 
@@ -25,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAXLIST 16
+#define MAXLIST 4
 #define MAXNAME 32
 
 typedef char * char_p;
@@ -57,21 +56,22 @@ typedef struct generic_type {
 	} value;
 } generic_type;
 
-// list container
-#define list_for(T)				\
-	typedef struct T##_list {		\
-		T *list;			\
-		int count;			\
-		int max;			\
-	} T##_list;				\
-						\
-	void init_##T##_list (T##_list *in, int max);	\
-	bool push_##T##_list (T##_list *in, T *val);	\
+// list container (this is very general)
+#define list_for(T)							\
+	typedef struct T##_list {					\
+		T *list;						\
+		int count;						\
+		int max_size;						\
+	} T##_list;							\
+									\
+	void init_##T##_list (T##_list *in, int max);			\
+	bool push_##T##_list (T##_list *in, T *val);			\
 	inline int size_##T##_list (T##_list *in) {return in->count;};	\
+	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
 	void free_##T##_list (T##_list *in);				\
 	T *get_##T##_list (T##_list *in, int idx);			\
-	T *begin_##T##_list (T##_list *in);	\
-	T *end_##T##_list (T##_list *in); \
+	T *begin_##T##_list (T##_list *in);				\
+	T *end_##T##_list (T##_list *in);				\
 
 list_for(generic_type);
 #undef list_for
@@ -85,6 +85,10 @@ typedef struct global_args {
 } global_args;
 
 // Expandable macros to add arguments to parse.
+#define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val);
+TYPES
+#undef F
+
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME]);
 TYPES
 #undef F

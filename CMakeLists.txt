@@ -27,5 +27,9 @@ enable_testing()
 add_test(NAME test_1 COMMAND test_main 1)
 set_tests_properties(test_1 PROPERTIES WILL_FAIL TRUE)
 
-add_test(NAME test_2 COMMAND test_main 1 2.6)
-add_test(NAME test_3 COMMAND test_main 2.5 2.5 5)
+add_test(NAME test_2 COMMAND test_main 1 2)
+set_tests_properties(test_2 PROPERTIES WILL_FAIL TRUE)
+
+add_test(NAME test_3 COMMAND test_main 1 name 2.6)
+add_test(NAME test_4 COMMAND test_main 2.5 name1 2.5 5 3 name2)
+add_test(NAME test_5 COMMAND test_main 1 2 3 4 5 6)
