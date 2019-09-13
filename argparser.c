@@ -71,11 +71,6 @@ TYPES
 
 #define F(T,F,C) T create_cl_##T (const char name[MAXNAME])		\
 	{								\
-		if (sing->args_it >= MAXLIST) {				\
-			fprintf (stderr,				\
-			         "Error: No more than %d CL arguments are permited\n", \
-			         MAXLIST);				\
-		}							\
 		if (sing->args_it >= sing->argc) {			\
 			fprintf (stderr,				\
 			         "Error: no enough CL arguments to set %s (arg: %d) \n", \
@@ -112,6 +107,20 @@ TYPES
 TYPES
 #undef F
 
+
+#define F(T,F,C) T create_reportable_##T (const char name[MAXNAME], T val) \
+	{								\
+		generic_type out;					\
+		set_gt_##T (&out, name, val);				\
+		push_generic_type_list (sing->reportables, &out);	\
+									\
+		return val;						\
+	}
+TYPES
+#undef F
+
+
+
 // Implemented (no generated) functions.
 void init_args(int argc, char **argv)
 {
@@ -120,8 +129,13 @@ void init_args(int argc, char **argv)
 		sing->argc = argc;
 		sing->argv = argv;
 		sing->args_it = 0;
-		sing->args_list = (generic_type_list *) malloc (sizeof(generic_type_list));
+		sing->args_list =
+			(generic_type_list *) malloc (sizeof(generic_type_list));
+		sing->reportables =
+			(generic_type_list *) malloc (sizeof(generic_type_list));
+
 		init_generic_type_list (sing->args_list, MAXLIST);
+		init_generic_type_list (sing->reportables, MAXLIST);
 
 		create_cl_char_p ("Executable");
 	} else {
@@ -149,13 +163,18 @@ void free_args ()
 {
 	free_generic_type_list(sing->args_list);
 	free (sing->args_list);
+	free_generic_type_list(sing->reportables);
+	free (sing->reportables);
 	free(sing);
 }
 
 void report_args ()
 {
-	generic_type *end = end_generic_type_list(sing->args_list);
 	for (generic_type *it = begin_generic_type_list(sing->args_list);
-	     it != end; ++it)
+	     it != end_generic_type_list(sing->args_list); ++it)
+		print_gt (it);
+
+	for (generic_type *it = begin_generic_type_list(sing->reportables);
+	     it != end_generic_type_list(sing->reportables); ++it)
 		print_gt (it);
 }

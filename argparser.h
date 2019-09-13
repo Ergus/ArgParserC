@@ -94,6 +94,10 @@ TYPES
 TYPES
 #undef F
 
+#define F(T,F,C) T create_reportable_##T (const char name[MAXNAME], T value);
+TYPES
+#undef F
+
 #define F(T,F,C) T create_optional_cl_##T (const char name[MAXNAME], T def);
 TYPES
 #undef F
