@@ -71,7 +71,7 @@ list_for(generic_type);
 		out.type = type_##T ;					\
 		strncpy (out.name, name, MAXNAME);			\
 		out.value.F = val;					\
-		push_generic_type_list (&sing->args_list, &out);	\
+		push_generic_type_list (sing->args_list, &out);	\
 									\
 		return val;						\
 	}
@@ -93,7 +93,7 @@ TYPES
 		out.type = type_##T ;					\
 		strncpy (out.name, name, MAXNAME);			\
 		out.value.F = val;					\
-		push_generic_type_list (&sing->args_list, &out);	\
+		push_generic_type_list (sing->args_list, &out);	\
 									\
 		return val;						\
 	}
@@ -108,7 +108,8 @@ void init_args(int argc, char **argv)
 		sing->argc = argc;
 		sing->argv = argv;
 		sing->args_it = 0;
-		init_generic_type_list (&(sing->args_list), MAXLIST);
+		sing->args_list = (generic_type_list *) malloc (sizeof(generic_type_list));
+		init_generic_type_list (sing->args_list, MAXLIST);
 	} else {
 		fprintf(stderr, "Arguments can be  initialized only once.");
 		exit(EXIT_FAILURE);
@@ -133,14 +134,15 @@ void print_gt(generic_type * in)
 
 void free_args ()
 {
-	free_generic_type_list(&sing->args_list);
+	free_generic_type_list(sing->args_list);
+	free (sing->args_list);
 	free(sing);
 }
 
 void report_args ()
 {
-	generic_type *end = end_generic_type_list(&sing->args_list);
-	for (generic_type *it = begin_generic_type_list(&sing->args_list);
+	generic_type *end = end_generic_type_list(sing->args_list);
+	for (generic_type *it = begin_generic_type_list(sing->args_list);
 	     it != end; ++it)
 		print_gt (it);
 }

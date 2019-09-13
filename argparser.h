@@ -81,7 +81,7 @@ typedef struct global_args {
 	int argc;
 	char **argv;
 	int args_it;
-	generic_type_list args_list;
+	generic_type_list *args_list;
 } global_args;
 
 // Expandable macros to add arguments to parse.
