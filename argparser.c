@@ -69,7 +69,7 @@ list_for(generic_type);
 TYPES
 #undef F
 
-#define F(T,F,C) T create_gt_##T (const char name[MAXNAME])		\
+#define F(T,F,C) T create_cl_##T (const char name[MAXNAME])		\
 	{								\
 		if (sing->args_it >= MAXLIST) {				\
 			fprintf (stderr,				\
@@ -95,7 +95,7 @@ TYPES
 #undef F
 
 #define F(T,F,C)							\
-	T create_optional_gt_##T (const char name[MAXNAME], T def)	\
+	T create_optional_cl_##T (const char name[MAXNAME], T def)	\
 	{								\
 		T val = def;						\
 		const size_t it = sing->args_it++;			\
@@ -123,7 +123,7 @@ void init_args(int argc, char **argv)
 		sing->args_list = (generic_type_list *) malloc (sizeof(generic_type_list));
 		init_generic_type_list (sing->args_list, MAXLIST);
 
-		create_gt_char_p ("Executable");
+		create_cl_char_p ("Executable");
 	} else {
 		fprintf(stderr, "Arguments can be  initialized only once.");
 		exit(EXIT_FAILURE);
