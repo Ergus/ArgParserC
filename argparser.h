@@ -59,8 +59,8 @@ typedef struct generic_type {
 typedef struct global_args {
 	int argc;
 	char **argv;
-	int it;
-	generic_type *list;
+	generic_type *args_list;
+	int args_it;
 } global_args;
 
 // Expandable macros to add arguments to parse.

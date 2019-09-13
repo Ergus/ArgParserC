@@ -21,13 +21,15 @@ static global_args *sing = NULL;
 
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME])		\
 	{								\
-		if (sing->it >= sing->argc) {				\
-			fprintf (stderr, "Error: no enough arguments to set %s\n", name); \
-			exit (1);						\
+		if (sing->args_it >= sing->argc) {			\
+			fprintf (stderr,				\
+			         "Error: no enough CL arguments to set %s (arg: %d) \n", \
+			         name, sing->args_it);			\
+			exit (1);					\
 		}							\
-		const size_t it = sing->it++;				\
+		const size_t it = sing->args_it++;				\
 		const T val = C(sing->argv[it]);			\
-		generic_type *out = &(sing->list[it]);			\
+		generic_type *out = &(sing->args_list[it]);			\
 									\
 		out->type = type_##T ;					\
 		strncpy (out->name, name, MAXNAME);			\
@@ -43,12 +45,12 @@ TYPES
 	T create_optional_gt_##T (const char name[MAXNAME], T def)	\
 	{								\
 		T val = def;						\
-		const size_t it = sing->it++;				\
+		const size_t it = sing->args_it++;				\
 									\
 		if (it < sing->argc)					\
 			val = C(sing->argv[it]);			\
 									\
-		generic_type *out = &(sing->list[it]);			\
+		generic_type *out = &(sing->args_list[it]);			\
 									\
 		out->type = type_##T ;					\
 		strncpy (out->name, name, MAXNAME);			\
@@ -66,8 +68,8 @@ void init_args(int argc, char **argv)
 		sing = (global_args *) malloc (sizeof(global_args));
 		sing->argc = argc;
 		sing->argv = argv;
-		sing->it   = 0;
-		sing->list = (generic_type *) malloc(MAXLIST * sizeof(generic_type));
+		sing->args_it = 0;
+		sing->args_list = (generic_type *) malloc(MAXLIST * sizeof(generic_type));
 	} else {
 		fprintf(stderr, "Arguments can be  initialized only once.");
 		exit(EXIT_FAILURE);
@@ -92,14 +94,14 @@ void print_gt(generic_type * in)
 
 void free_args ()
 {
-	free(sing->list);
+	free(sing->args_list);
 	free(sing);
 }
 
 void report_args ()
 {
-	for (size_t i = 0; i < sing->it; ++i)
-		print_gt (&(sing->list[i]));
+	for (size_t i = 0; i < sing->args_it; ++i)
+		print_gt (&(sing->args_list[i]));
 }
 
 
