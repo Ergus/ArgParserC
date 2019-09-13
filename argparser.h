@@ -39,12 +39,14 @@ typedef char * char_p;
 	F(double, lf, atof)			\
 	F(char_p, s, (char_p))
 
+// Enum with the defined types
 typedef enum type_t {
 	#define F(t,f,...) type_##t,
 	TYPES
 	#undef F
 } type_t;
 
+// Generic type (this is the key of everything)
 typedef struct generic_type {
 	type_t type;
 	char name[MAXNAME];
@@ -55,12 +57,31 @@ typedef struct generic_type {
 	} value;
 } generic_type;
 
+// list container
+#define list_for(T)				\
+	typedef struct T##_list {		\
+		T *list;			\
+		int count;			\
+		int max;			\
+	} T##_list;				\
+						\
+	void init_##T##_list (T##_list *in, int max);	\
+	bool push_##T##_list (T##_list *in, T *val);	\
+	inline int size_##T##_list (T##_list *in) {return in->count;};	\
+	void free_##T##_list (T##_list *in);				\
+	T *get_##T##_list (T##_list *in, int idx);			\
+	T *begin_##T##_list (T##_list *in);	\
+	T *end_##T##_list (T##_list *in); \
+
+list_for(generic_type);
+#undef list_for
+
 // Arguments part
 typedef struct global_args {
 	int argc;
 	char **argv;
-	generic_type *args_list;
 	int args_it;
+	generic_type_list args_list;
 } global_args;
 
 // Expandable macros to add arguments to parse.

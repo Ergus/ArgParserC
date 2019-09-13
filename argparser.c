@@ -19,6 +19,42 @@
 
 static global_args *sing = NULL;
 
+#define list_for(T)					\
+	void init_##T##_list (T##_list *in, int max)	\
+	{						\
+		in->list = calloc (max, sizeof (T));	\
+		in->max = max;				\
+		in->count = 0;				\
+	}						\
+							\
+	bool push_##T##_list (T##_list *in, T *value)	\
+	{						\
+		if (in->count + 1 >= in->max)		\
+			return false;			\
+							\
+		in->list[in->count++] = *value;		\
+		return true;				\
+	}						\
+							\
+	void free_##T##_list (T##_list *in)		\
+	{						\
+		free (in->list);			\
+	}						\
+							\
+							\
+	T *get_##T##_list (T##_list *in, int idx)	\
+	{						\
+		if (idx < 0 || idx >= in->count)	\
+			return NULL;			\
+		return &in->list[idx];			\
+	}						\
+	T *begin_##T##_list (T##_list *in) {return in->list;};		\
+	T *end_##T##_list (T##_list *in) {return &in->list[in->count];}; \
+
+
+list_for(generic_type);
+#undef list_for
+
 #define F(T,F,C) T create_gt_##T (const char name[MAXNAME])		\
 	{								\
 		if (sing->args_it >= sing->argc) {			\
@@ -27,13 +63,15 @@ static global_args *sing = NULL;
 			         name, sing->args_it);			\
 			exit (1);					\
 		}							\
-		const size_t it = sing->args_it++;				\
-		const T val = C(sing->argv[it]);			\
-		generic_type *out = &(sing->args_list[it]);			\
 									\
-		out->type = type_##T ;					\
-		strncpy (out->name, name, MAXNAME);			\
-		out->value.F = val;					\
+		const size_t it = sing->args_it++;			\
+		const T val = C(sing->argv[it]);			\
+									\
+		generic_type out;					\
+		out.type = type_##T ;					\
+		strncpy (out.name, name, MAXNAME);			\
+		out.value.F = val;					\
+		push_generic_type_list (&sing->args_list, &out);	\
 									\
 		return val;						\
 	}
@@ -50,11 +88,12 @@ TYPES
 		if (it < sing->argc)					\
 			val = C(sing->argv[it]);			\
 									\
-		generic_type *out = &(sing->args_list[it]);			\
+		generic_type out;					\
 									\
-		out->type = type_##T ;					\
-		strncpy (out->name, name, MAXNAME);			\
-		out->value.F = val;					\
+		out.type = type_##T ;					\
+		strncpy (out.name, name, MAXNAME);			\
+		out.value.F = val;					\
+		push_generic_type_list (&sing->args_list, &out);	\
 									\
 		return val;						\
 	}
@@ -69,7 +108,7 @@ void init_args(int argc, char **argv)
 		sing->argc = argc;
 		sing->argv = argv;
 		sing->args_it = 0;
-		sing->args_list = (generic_type *) malloc(MAXLIST * sizeof(generic_type));
+		init_generic_type_list (&(sing->args_list), MAXLIST);
 	} else {
 		fprintf(stderr, "Arguments can be  initialized only once.");
 		exit(EXIT_FAILURE);
@@ -94,14 +133,16 @@ void print_gt(generic_type * in)
 
 void free_args ()
 {
-	free(sing->args_list);
+	free_generic_type_list(&sing->args_list);
 	free(sing);
 }
 
 void report_args ()
 {
-	for (size_t i = 0; i < sing->args_it; ++i)
-		print_gt (&(sing->args_list[i]));
+	generic_type *end = end_generic_type_list(&sing->args_list);
+	for (generic_type *it = begin_generic_type_list(&sing->args_list);
+	     it != end; ++it)
+		print_gt (it);
 }
 
 
