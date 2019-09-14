@@ -17,6 +17,10 @@
 
 #include "argparser.h"
 
+#include <errno.h>
+#include <time.h>
+
+
 static global_args *sing = NULL;
 
 // List containers
@@ -28,17 +32,17 @@ static global_args *sing = NULL;
 		in->count = 0;						\
 	}								\
 									\
-	bool push_##T##_list (T##_list *in, T *value)			\
+	T *push_##T##_list (T##_list *in, T *value)			\
 	{								\
 		if (in->count + 1 >= in->max_size) {			\
 			in->max_size *= 2;				\
 			in->list = realloc(in->list, in->max_size * sizeof(T)); \
 			if (!in->list)					\
-				return false;				\
+				return NULL;				\
 		}							\
 									\
-		in->list[in->count++] = *value;				\
-		return true;						\
+		in->list[in->count] = *value;				\
+		return &in->list[in->count++];				\
 	}								\
 									\
 	void free_##T##_list (T##_list *in)				\
@@ -96,7 +100,7 @@ TYPES
 									\
 		generic_type out;					\
 		set_gt_##T (&out, name, val);				\
-		push_generic_type_list (sing->args_list, &out);	\
+		push_generic_type_list (sing->args_list, &out);		\
 									\
 		return val;						\
 	}
@@ -104,7 +108,7 @@ TYPES
 #undef F
 
 #define F(T,F,C)							\
-	T create_optional_cl_##T (const char name[MAXNAME], T def)	\
+	T create_optional_cl_##T (const char *name, T def)	\
 	{								\
 		T val = def;						\
 		const size_t it = sing->args_it++;			\
@@ -122,17 +126,73 @@ TYPES
 #undef F
 
 
-#define F(T,F,C) T create_reportable_##T (const char name[MAXNAME], T val) \
+#define F(T,F,C) T *create_reportable_##T (const char *name, T val)	\
 	{								\
 		generic_type out;					\
 		set_gt_##T (&out, name, val);				\
-		push_generic_type_list (sing->reportables, &out);	\
-									\
-		return val;						\
+		return &push_generic_type_list (sing->reportables, &out)->value.F ; \
 	}
 TYPES
 #undef F
 
+// Timer
+static
+void getTime(struct timespec *ts)
+{
+	if (clock_gettime(CLOCK_MONOTONIC, ts)) {
+		const int error = errno;
+		fprintf(stderr, "Error: timer %s \n", strerror(error));
+		exit(1);
+	}
+}
+
+void reset_timer(timer *out)
+{
+	out->_startTime.tv_nsec = 0; out->_startTime.tv_sec = 0;
+	out->_endTime.tv_nsec = 0; out->_endTime.tv_sec = 0;
+	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
+	*out->val_p = 0.0;
+}
+
+timer *create_timer(const char *name)
+{
+	timer *out = (timer *) malloc(sizeof (timer));
+	out->val_p = create_reportable_double (name, 0.0);
+
+	void reset_timer(timer *out);
+
+	getTime(&out->_startTime);
+
+	return out;
+}
+
+void start_timer(timer *out)
+{
+	getTime(&out->_startTime);
+}
+
+
+void stop_timer(timer *out)
+{
+	getTime(&out->_endTime);
+
+	if (out->_endTime.tv_nsec < out->_startTime.tv_nsec) {
+		const long nsec = 1E9L + out->_endTime.tv_nsec - out->_startTime.tv_nsec;
+		out->_accumulated.tv_nsec += nsec;
+		out->_accumulated.tv_sec += out->_endTime.tv_sec - 1 - out->_startTime.tv_sec;
+	} else {
+		out->_accumulated.tv_nsec += out->_endTime.tv_nsec - out->_startTime.tv_nsec;
+		out->_accumulated.tv_sec += out->_endTime.tv_sec - out->_startTime.tv_sec;
+	}
+
+	*out->val_p = out->_accumulated.tv_sec * 1.0E9 + out->_accumulated.tv_nsec;
+}
+
+void free_timer(timer *out)
+{
+	stop_timer(out);
+	free(out);
+}
 
 
 // Implemented (no generated) functions.

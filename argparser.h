@@ -65,7 +65,7 @@ typedef struct generic_type {
 	} T##_list;							\
 									\
 	void init_##T##_list (T##_list *in, int max);			\
-	bool push_##T##_list (T##_list *in, T *val);			\
+	T* push_##T##_list (T##_list *in, T *val);			\
 	inline int size_##T##_list (T##_list *in) {return in->count;};	\
 	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
 	void free_##T##_list (T##_list *in);				\
@@ -97,13 +97,29 @@ TYPES
 TYPES
 #undef F
 
-#define F(T,F,C) T create_reportable_##T (const char name[MAXNAME], T value);
+#define F(T,F,C) T *create_reportable_##T (const char name[MAXNAME], T value);
 TYPES
 #undef F
 
 #define F(T,F,C) T create_optional_cl_##T (const char name[MAXNAME], T def);
 TYPES
 #undef F
+
+
+typedef struct timer {
+	struct timespec _startTime;
+	struct timespec _endTime;
+	struct timespec _accumulated;
+
+	double *val_p;
+} timer;
+
+timer *create_timer(const char *name);
+void start_timer(timer *out);
+void stop_timer(timer *out);
+void reset_timer(timer *out);
+void free_timer(timer *out);
+
 
 // Manual functions
 void init_args (int argc, char **argv);
