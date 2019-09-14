@@ -76,6 +76,9 @@ typedef struct generic_type {
 list_for(generic_type);
 #undef list_for
 
+generic_type *get_named_generic_type_list (generic_type_list *in,
+                                           const char name[]);
+
 // Arguments part
 typedef struct global_args {
 	int argc;

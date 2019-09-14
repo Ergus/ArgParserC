@@ -53,11 +53,25 @@ static global_args *sing = NULL;
 			return NULL;					\
 		return &in->list[idx];					\
 	}								\
+									\
 	T *begin_##T##_list (T##_list *in) {return in->list;};		\
 	T *end_##T##_list (T##_list *in) {return &in->list[in->count];}; \
+									\
 
 list_for(generic_type);
 #undef list_for
+
+generic_type *get_named_generic_type_list (generic_type_list *in,
+                                           const char name[])
+{
+	for (generic_type *it = begin_generic_type_list(in);
+	     it != end_generic_type_list(in); ++it)
+		if (strcmp (name, it->name) == 0)
+			return it;
+	return NULL;
+}
+
+
 
 // The rest
 #define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val) \
