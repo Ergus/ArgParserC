@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project (ArgParserC)
 
-add_library (argparser argparser.c)
+add_library (argparser argparser.c timer.c)
 
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
