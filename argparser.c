@@ -17,8 +17,6 @@
 
 #include "argparser.h"
 
-#include <errno.h>
-#include <time.h>
 
 
 static global_args *sing = NULL;

@@ -97,14 +97,13 @@ TYPES
 TYPES
 #undef F
 
-#define F(T,F,C) T *create_reportable_##T (const char name[MAXNAME], T value);
-TYPES
-#undef F
-
 #define F(T,F,C) T create_optional_cl_##T (const char name[MAXNAME], T def);
 TYPES
 #undef F
 
+#define F(T,F,C) T *create_reportable_##T (const char name[MAXNAME], T value);
+TYPES
+#undef F
 
 typedef struct timer {
 	struct timespec _startTime;
@@ -114,16 +113,17 @@ typedef struct timer {
 	double *val_p;
 } timer;
 
+/*! Timer functions. */
 timer *create_timer(const char *name);
 void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);
 void free_timer(timer *out);
 
-
-// Manual functions
+/*! General functions. */
 void init_args (int argc, char **argv);
 void print_gt(generic_type * in);
 void report_args ();
 void free_args ();
+
 #endif

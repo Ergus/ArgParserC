@@ -39,6 +39,7 @@ void reset_timer(timer *out)
 	*out->val_p = 0.0;
 }
 
+// Function to create timer.
 timer *create_timer(const char *name)
 {
 	timer *out = (timer *) malloc(sizeof (timer));
