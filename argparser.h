@@ -18,6 +18,10 @@
 #ifndef ARGPARSE_H
 #define ARGPARSE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -125,5 +129,10 @@ void init_args (int argc, char **argv);
 void print_gt(generic_type * in);
 void report_args ();
 void free_args ();
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
