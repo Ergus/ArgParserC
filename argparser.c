@@ -28,7 +28,7 @@ global_args *sing = NULL;
 		in->count = 0;						\
 	}								\
 									\
-	size_t push_##T##_list (T##_list *in, T *value)			\
+	int push_##T##_list (T##_list *in, T *value)			\
 	{								\
 		if (in->count + 1 >= in->max_size) {			\
 			in->max_size *= 2;				\
@@ -123,7 +123,7 @@ TYPES
 #undef F
 
 
-#define F(T,F,C) size_t create_reportable_##T (const char *name, T val)	\
+#define F(T,F,C) int create_reportable_##T (const char *name, T val)	\
 	{								\
 		generic_type out;					\
 		set_gt_##T (&out, name, val);				\
