@@ -83,10 +83,10 @@ The functionalities are:
    
 2. Add specific values to the final report.
 
-	* `TYPE *create_reportable_TYPE (name, value)` : This creates a
+	* `size_t create_reportable_TYPE (name, value)` : This creates a
       `reportable` value. This function add a variable with `name` and
-      default value `val`. The value is stored internally and a
-      pointer to the internal stored memory is returned.
+      default value `val`. The value is stored internally and returns
+      the index of the global type object in the reportable array.
 
 3. Add timers that automatically are added to the report.
 

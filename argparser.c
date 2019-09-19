@@ -17,9 +17,7 @@
 
 #include "argparser.h"
 
-
-
-static global_args *sing = NULL;
+global_args *sing = NULL;
 
 // List containers
 #define list_for(T)							\
@@ -30,17 +28,18 @@ static global_args *sing = NULL;
 		in->count = 0;						\
 	}								\
 									\
-	T *push_##T##_list (T##_list *in, T *value)			\
+	size_t push_##T##_list (T##_list *in, T *value)			\
 	{								\
 		if (in->count + 1 >= in->max_size) {			\
 			in->max_size *= 2;				\
 			in->list = realloc(in->list, in->max_size * sizeof(T)); \
 			if (!in->list)					\
-				return NULL;				\
+				return -1;				\
 		}							\
 									\
 		in->list[in->count] = *value;				\
-		return &in->list[in->count++];				\
+		in->list[in->count];					\
+		return in->count++;					\
 	}								\
 									\
 	void free_##T##_list (T##_list *in)				\
@@ -124,11 +123,11 @@ TYPES
 #undef F
 
 
-#define F(T,F,C) T *create_reportable_##T (const char *name, T val)	\
+#define F(T,F,C) size_t create_reportable_##T (const char *name, T val)	\
 	{								\
 		generic_type out;					\
 		set_gt_##T (&out, name, val);				\
-		return &push_generic_type_list (sing->reportables, &out)->value.F ; \
+		return push_generic_type_list (sing->reportables, &out); \
 	}
 TYPES
 #undef F

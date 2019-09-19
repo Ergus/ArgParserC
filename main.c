@@ -19,6 +19,8 @@
 
 #include "argparser.h"
 
+#include <unistd.h>
+
 int main(int argc, char *argv[])
 {
 	init_args (argc, argv);
@@ -33,6 +35,11 @@ int main(int argc, char *argv[])
 
 	timer *t = create_timer("My_timer");
 	create_reportable_int ("reportable", argc);
+
+	timer *t2 = create_timer("My_timer2"); // New timer to trigger realloc
+	create_reportable_double ("reportable", v_double / o_double);
+	sleep (1);
+	free_timer(t2);
 
 	free_timer(t);
 	report_args ();

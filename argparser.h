@@ -69,7 +69,7 @@ typedef struct generic_type {
 	} T##_list;							\
 									\
 	void init_##T##_list (T##_list *in, int max);			\
-	T* push_##T##_list (T##_list *in, T *val);			\
+	size_t push_##T##_list (T##_list *in, T *val);			\
 	inline int size_##T##_list (T##_list *in) {return in->count;};	\
 	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
 	void free_##T##_list (T##_list *in);				\
@@ -92,6 +92,8 @@ typedef struct global_args {
 	generic_type_list *reportables;
 } global_args;
 
+extern global_args *sing;
+
 // Expandable macros to add arguments to parse.
 #define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val);
 TYPES
@@ -105,7 +107,7 @@ TYPES
 TYPES
 #undef F
 
-#define F(T,F,C) T *create_reportable_##T (const char name[MAXNAME], T value);
+#define F(T,F,C) size_t create_reportable_##T (const char name[MAXNAME], T value);
 TYPES
 #undef F
 
@@ -114,11 +116,12 @@ typedef struct timer {
 	struct timespec _endTime;
 	struct timespec _accumulated;
 
-	double *val_p;
+	size_t idx;
 } timer;
 
 /*! Timer functions. */
 timer *create_timer(const char *name);
+double getNS_timer(const timer *in);
 void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);

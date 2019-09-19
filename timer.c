@@ -31,19 +31,32 @@ void getTime(struct timespec *ts)
 	}
 }
 
+static
+double getNS(const struct timespec *ts)
+{
+	return ts->tv_sec * 1.0E9 + ts->tv_sec;
+}
+
+
+double getNS_timer(const timer *in)
+{
+	return get_generic_type_list(sing->reportables, in->idx)->value.lf;
+}
+
+
 void reset_timer(timer *out)
 {
 	out->_startTime.tv_nsec = 0; out->_startTime.tv_sec = 0;
 	out->_endTime.tv_nsec = 0; out->_endTime.tv_sec = 0;
 	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
-	*out->val_p = 0.0;
+	get_generic_type_list(sing->reportables, out->idx)->value.lf = 0.0;
 }
 
 // Function to create timer.
 timer *create_timer(const char *name)
 {
 	timer *out = (timer *) malloc(sizeof (timer));
-	out->val_p = create_reportable_double (name, 0.0);
+	out->idx = create_reportable_double (name, 0.0);
 
 	void reset_timer(timer *out);
 
@@ -71,7 +84,7 @@ void stop_timer(timer *out)
 		out->_accumulated.tv_sec += out->_endTime.tv_sec - out->_startTime.tv_sec;
 	}
 
-	*out->val_p = out->_accumulated.tv_sec * 1.0E9 + out->_accumulated.tv_nsec;
+	get_generic_type_list(sing->reportables, out->idx)->value.lf = getNS(&out->_accumulated);
 }
 
 void free_timer(timer *out)
