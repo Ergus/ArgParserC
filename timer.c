@@ -18,7 +18,7 @@
 #include "argparser.h"
 #include <time.h>
 #include <errno.h>
-
+#include <assert.h>
 
 // Timer
 static
@@ -57,6 +57,8 @@ timer *create_timer(const char *name)
 {
 	timer *out = (timer *) malloc(sizeof (timer));
 	out->idx = create_reportable_double (name, 0.0);
+
+	assert(out->idx >= 0);
 
 	void reset_timer(timer *out);
 

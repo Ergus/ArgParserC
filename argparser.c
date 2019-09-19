@@ -32,6 +32,7 @@ global_args *sing = NULL;
 	{								\
 		if (in->count + 1 >= in->max_size) {			\
 			in->max_size *= 2;				\
+			dbprintf ("Reallocating array to %d\n", in->max_size); \
 			in->list = realloc(in->list, in->max_size * sizeof(T)); \
 			if (!in->list)					\
 				return -1;				\
@@ -73,7 +74,6 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
 }
 
 
-
 // The rest
 #define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val) \
 	{								\
@@ -87,8 +87,7 @@ TYPES
 #define F(T,F,C) T create_cl_##T (const char name[MAXNAME])		\
 	{								\
 		if (sing->args_it >= sing->argc) {			\
-			fprintf (stderr,				\
-			         "Error: no enough CL arguments to set %s (arg: %d) \n", \
+			dbprintf ("Error: no enough CL arguments to set %s (arg: %d) \n", \
 			         name, sing->args_it);			\
 			exit (1);					\
 		}							\
@@ -133,28 +132,27 @@ TYPES
 #undef F
 
 
-
 // Implemented (no generated) functions.
 void init_args(int argc, char **argv)
 {
-	if (!sing) {
-		sing = (global_args *) malloc (sizeof(global_args));
-		sing->argc = argc;
-		sing->argv = argv;
-		sing->args_it = 0;
-		sing->args_list =
-			(generic_type_list *) malloc (sizeof(generic_type_list));
-		sing->reportables =
-			(generic_type_list *) malloc (sizeof(generic_type_list));
-
-		init_generic_type_list (sing->args_list, MAXLIST);
-		init_generic_type_list (sing->reportables, MAXLIST);
-
-		create_cl_char_p ("Executable");
-	} else {
-		fprintf(stderr, "Arguments can be  initialized only once.");
+	if (sing) {
+		dbprintf("Arguments can be initialized only once.\n");
 		exit(EXIT_FAILURE);
 	}
+
+	sing = (global_args *) malloc (sizeof(global_args));
+	sing->argc = argc;
+	sing->argv = argv;
+	sing->args_it = 0;
+	sing->args_list =
+		(generic_type_list *) malloc (sizeof(generic_type_list));
+	sing->reportables =
+		(generic_type_list *) malloc (sizeof(generic_type_list));
+
+	init_generic_type_list (sing->args_list, MAXLIST);
+	init_generic_type_list (sing->reportables, MAXLIST);
+
+	create_cl_char_p ("Executable");
 }
 
 void print_gt(generic_type * in)
@@ -168,7 +166,7 @@ void print_gt(generic_type * in)
 		TYPES
 		#undef F
 	default:
-		fprintf (stderr, "Error printing generic type");
+		dbprintf ("Error printing generic type");
 	}
 }
 
