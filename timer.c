@@ -52,6 +52,12 @@ void reset_timer(timer *out)
 	get_generic_type_list(sing->reportables, out->idx)->value.lf = 0.0;
 }
 
+
+void start_timer(timer *out)
+{
+	getTime(&out->_startTime);
+}
+
 // Function to create timer.
 timer *create_timer(const char *name)
 {
@@ -60,18 +66,12 @@ timer *create_timer(const char *name)
 
 	assert(out->idx >= 0);
 
-	void reset_timer(timer *out);
+	reset_timer(out);
 
-	getTime(&out->_startTime);
+	start_timer(out);
 
 	return out;
 }
-
-void start_timer(timer *out)
-{
-	getTime(&out->_startTime);
-}
-
 
 void stop_timer(timer *out)
 {
@@ -91,6 +91,5 @@ void stop_timer(timer *out)
 
 void free_timer(timer *out)
 {
-	stop_timer(out);
 	free(out);
 }
