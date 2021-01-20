@@ -45,7 +45,7 @@ typedef char * char_p;
    3) function to convert from char) */
 #define TYPES					\
 	F(int, d, atoi)				\
-	F(double, lf, atof)			\
+	F(double, lg, atof)			\
 	F(char_p, s, (char_p))
 
 // Enum with the defined types

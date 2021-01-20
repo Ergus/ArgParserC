@@ -34,13 +34,13 @@ void getTime(struct timespec *ts)
 static
 double getNS(const struct timespec *ts)
 {
-	return ts->tv_sec * 1.0E9 + ts->tv_sec;
+	return ts->tv_sec * 1.0E9 + ts->tv_nsec;
 }
 
 
 double getNS_timer(const timer *in)
 {
-	return get_generic_type_list(sing->reportables, in->idx)->value.lf;
+	return get_generic_type_list(sing->reportables, in->idx)->value.lg;
 }
 
 
@@ -49,7 +49,7 @@ void reset_timer(timer *out)
 	out->_startTime.tv_nsec = 0; out->_startTime.tv_sec = 0;
 	out->_endTime.tv_nsec = 0; out->_endTime.tv_sec = 0;
 	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
-	get_generic_type_list(sing->reportables, out->idx)->value.lf = 0.0;
+	get_generic_type_list(sing->reportables, out->idx)->value.lg = 0.0;
 }
 
 
@@ -80,13 +80,13 @@ void stop_timer(timer *out)
 	if (out->_endTime.tv_nsec < out->_startTime.tv_nsec) {
 		const long nsec = 1E9L + out->_endTime.tv_nsec - out->_startTime.tv_nsec;
 		out->_accumulated.tv_nsec += nsec;
-		out->_accumulated.tv_sec += out->_endTime.tv_sec - 1 - out->_startTime.tv_sec;
+		out->_accumulated.tv_sec += (out->_endTime.tv_sec - 1 - out->_startTime.tv_sec);
 	} else {
-		out->_accumulated.tv_nsec += out->_endTime.tv_nsec - out->_startTime.tv_nsec;
-		out->_accumulated.tv_sec += out->_endTime.tv_sec - out->_startTime.tv_sec;
+		out->_accumulated.tv_nsec += (out->_endTime.tv_nsec - out->_startTime.tv_nsec);
+		out->_accumulated.tv_sec += (out->_endTime.tv_sec - out->_startTime.tv_sec);
 	}
 
-	get_generic_type_list(sing->reportables, out->idx)->value.lf = getNS(&out->_accumulated);
+	get_generic_type_list(sing->reportables, out->idx)->value.lg = getNS(&out->_accumulated);
 }
 
 void free_timer(timer *out)
