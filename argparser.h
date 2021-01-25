@@ -37,22 +37,43 @@ extern "C" {
 #endif //dbprintf
 
 #define MAXLIST 4
-#define MAXNAME 32
+#define MAXNAME 128
+
+typedef struct timer {
+	struct timespec _startTime;
+	struct timespec _endTime;
+	struct timespec _accumulated;
+
+	int idx;
+} timer;
+
+/*! Timer functions. */
+timer *create_timer(const char *name);
+double getNS_timer(const timer *in);
+void print_timer(const timer *in);
+void start_timer(timer *out);
+void stop_timer(timer *out);
+void reset_timer(timer *out);
+void free_timer(timer *out);
 
 typedef char * char_p;
+
+#define COPYPTR(IN,IGNORE,OUT) *OUT = IN
 
 /* The types must have 3 arguments:
    1) type
    2) format for printf without %, should not be repeated
-   3) function to convert from char) */
-#define TYPES					\
-	F(int, d, atoi)				\
-	F(double, lg, atof)			\
-	F(char_p, s, (char_p))
+   3) function to convert FROM char)
+   4) function to convert TO char (default printf) */
+#define TYPES									\
+	F(int, d, sscanf, sprintf)					\
+	F(double, lg, sscanf, sprintf)				\
+	F(char_p, s, COPYPTR, sprintf)
+	//	F(timer, t, create_timer, print_timer)
 
 // Enum with the defined types
 typedef enum type_t {
-	#define F(t,f,...) type_##t,
+	#define F(T,...) type_##T,
 	TYPES
 	#undef F
 } type_t;
@@ -62,7 +83,7 @@ typedef struct generic_type {
 	type_t type;
 	char name[MAXNAME];
 	union {
-		#define F(t,f,...) t f;
+		#define F(T,F,...) T F;
 		TYPES
 		#undef F
 	} value;
@@ -103,43 +124,28 @@ typedef struct global_args {
 extern global_args *sing;
 
 // Expandable macros to add arguments to parse.
-#define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val);
+#define F(T,...) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val);
 TYPES
 #undef F
 
-#define F(T,F,C) T create_cl_##T (const char name[MAXNAME]);
+#define F(T,...) T create_cl_##T (const char name[MAXNAME]);
 TYPES
 #undef F
 
-#define F(T,F,C) T create_optional_cl_##T (const char name[MAXNAME], T def);
+#define F(T,...) T create_optional_cl_##T (const char name[MAXNAME], T def);
 TYPES
 #undef F
 
-#define F(T,F,C) int create_reportable_##T (const char name[MAXNAME], T value);
+#define F(T,...) int create_reportable_##T (const char name[MAXNAME], T value);
 TYPES
 #undef F
 
-typedef struct timer {
-	struct timespec _startTime;
-	struct timespec _endTime;
-	struct timespec _accumulated;
-
-	int idx;
-} timer;
-
-/*! Timer functions. */
-timer *create_timer(const char *name);
-double getNS_timer(const timer *in);
-void start_timer(timer *out);
-void stop_timer(timer *out);
-void reset_timer(timer *out);
-void free_timer(timer *out);
 
 /*! General functions. */
-void init_args (int argc, char **argv);
+void init_args(int argc, char **argv);
 void print_gt(generic_type * in);
-void report_args ();
-void free_args ();
+void report_args();
+void free_args();
 
 
 #ifdef __cplusplus

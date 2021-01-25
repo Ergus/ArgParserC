@@ -75,7 +75,7 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
 
 
 // The rest
-#define F(T,F,C) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val) \
+#define F(T,F,C,P) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val) \
 	{								\
 		out->type = type_##T ;					\
 		strncpy (out->name, name, MAXNAME);			\
@@ -84,45 +84,47 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
 TYPES
 #undef F
 
-#define F(T,F,C) T create_cl_##T (const char name[MAXNAME])		\
-	{								\
-		if (sing->args_it >= sing->argc) {			\
+#define F(T,F,C,P)														\
+	T create_cl_##T (const char name[MAXNAME])							\
+	{																	\
+		if (sing->args_it >= sing->argc) {								\
 			dbprintf ("Error: no enough CL arguments to set %s (arg: %d) \n", \
-			         name, sing->args_it);			\
-			exit (1);					\
-		}							\
-									\
-		const T val = C(sing->argv[sing->args_it++]);		\
-									\
-		generic_type out;					\
-		set_gt_##T (&out, name, val);				\
-		push_generic_type_list (sing->args_list, &out);		\
-									\
-		return val;						\
+			          name, sing->args_it);								\
+			exit (1);													\
+		}																\
+																		\
+		T val;															\
+		C(sing->argv[sing->args_it++], "%" #F, &val);					\
+																		\
+		generic_type out;												\
+		set_gt_##T (&out, name, val);									\
+		push_generic_type_list (sing->args_list, &out);					\
+																		\
+		return val;														\
 	}
 TYPES
 #undef F
 
-#define F(T,F,C)							\
-	T create_optional_cl_##T (const char *name, T def)	\
-	{								\
-		T val = def;						\
-		const size_t it = sing->args_it++;			\
-									\
-		if (it < sing->argc)					\
-			val = C(sing->argv[it]);			\
-									\
-		generic_type out;					\
-		set_gt_##T (&out, name, val);				\
+#define F(T,F,C,P)											\
+	T create_optional_cl_##T (const char *name, T def)		\
+	{														\
+		T val = def;										\
+															\
+		if (sing->args_it < sing->argc) {					\
+			C(sing->argv[sing->args_it++], "%" #F, &val);	\
+		}													\
+															\
+		generic_type out;									\
+		set_gt_##T (&out, name, val);						\
 		push_generic_type_list (sing->args_list, &out);		\
-									\
-		return val;						\
+															\
+		return val;											\
 	}
 TYPES
 #undef F
 
 
-#define F(T,F,C) int create_reportable_##T (const char *name, T val)	\
+#define F(T,F,C,P) int create_reportable_##T (const char *name, T val)	\
 	{								\
 		generic_type out;					\
 		set_gt_##T (&out, name, val);				\
@@ -157,17 +159,19 @@ void init_args(int argc, char **argv)
 
 void print_gt(generic_type * in)
 {
+	char buff[MAXNAME];
 	switch (in->type) {
-		#define F(T,F,C)					\
-			case ( type_##T ):				\
-				printf ("%s: %" #F "\n",		\
-					in->name, in->value.F );	\
-				break;
+#define F(T,F,C,P)								\
+		case ( type_##T ):						\
+			P(buff, "%" #F, in->value.F);		\
+			break;
 		TYPES
-		#undef F
+#undef F
 	default:
 		dbprintf ("Error printing generic type");
+		return;
 	}
+	printf("%s: %s\n", in->name, buff);
 }
 
 void free_args ()
