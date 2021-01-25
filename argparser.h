@@ -28,11 +28,13 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef dbprintf
 #ifndef NDEBUG
 	#define dbprintf(...) fprintf (stderr, __VA_ARGS__)
 #else
-
-#endif
+	#define dbprintf(...) {}
+#endif // NDEBUG
+#endif //dbprintf
 
 #define MAXLIST 4
 #define MAXNAME 32
