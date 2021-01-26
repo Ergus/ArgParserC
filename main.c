@@ -33,16 +33,16 @@ int main(int argc, char *argv[])
 	int o_double = create_optional_cl_double ("odouble", 0.5);
 	char *o_char = create_optional_cl_char_p ("ochar_p", NULL);
 
-	timer *t = create_timer("My_timer");
+	timer t = create_timer("My_timer");
 	create_reportable_int ("reportable", argc);
 
 	printf ("Second timer to trigger\n");
-	timer *t2 = create_timer("My_timer2"); // New timer to trigger realloc
 	create_reportable_double ("Reportable2", v_double / o_double);
-	usleep (1000);
-	free_timer(t2);
 
-	free_timer(t);
+	timer t2 = create_timer("My_timer2"); // New timer to trigger realloc
+	usleep (1000);
+	stop_timer(&t2);
+
 	report_args ();
 	free_args ();
 	return 0;

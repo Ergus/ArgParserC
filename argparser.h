@@ -39,22 +39,28 @@ extern "C" {
 #define MAXLIST 4
 #define MAXNAME 128
 
-typedef struct timer {
+typedef struct ttimer {
 	struct timespec _startTime;
 	struct timespec _endTime;
 	struct timespec _accumulated;
+} ttimer;
 
-	int idx;
+// ATM: the parameters are ignored and timer always initialized to zero.
+void reset_ttimer(ttimer *out);
+int create_ttimer(const char *, const char *format, ttimer *out);
+int print_ttimer(char *out, const char *format, ttimer in);
+
+typedef struct timer {
+	int tidx;
 } timer;
 
 /*! Timer functions. */
-timer *create_timer(const char *name);
+timer create_timer(const char *name);
 double getNS_timer(const timer *in);
 void print_timer(const timer *in);
 void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);
-void free_timer(timer *out);
 
 typedef char * char_p;
 
@@ -68,8 +74,8 @@ typedef char * char_p;
 #define TYPES									\
 	F(int, d, sscanf, sprintf)					\
 	F(double, lg, sscanf, sprintf)				\
-	F(char_p, s, COPYPTR, sprintf)
-	//	F(timer, t, create_timer, print_timer)
+	F(char_p, s, COPYPTR, sprintf)				\
+	F(ttimer, t, create_ttimer, print_ttimer)
 
 // Enum with the defined types
 typedef enum type_t {
