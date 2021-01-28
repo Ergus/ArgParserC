@@ -66,7 +66,7 @@ typedef char * char_p;
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
 #define PRINT_STRING(buff, FORMAT, input)					\
-	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input);
+	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input)
 
 /* The types must have 3 arguments:
    1) type
@@ -151,7 +151,7 @@ TYPES
 
 /*! General functions. */
 void init_args(int argc, char **argv);
-void print_gt(generic_type * in);
+int sprintf_gt(char out[], const generic_type *in);
 void report_args();
 void report_args_json();
 void free_args();

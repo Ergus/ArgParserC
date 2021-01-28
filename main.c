@@ -43,7 +43,10 @@ int main(int argc, char *argv[])
 	usleep (1000);
 	stop_timer(&t2);
 
-	report_args ();
+	report_args();
+
+	report_args_json();
+
 	free_args ();
 	return 0;
 }

@@ -157,24 +157,21 @@ void init_args(int argc, char **argv)
 	create_cl_char_p ("Executable");
 }
 
-void print_gt(generic_type * in)
+int sprintf_gt(char out[], const generic_type *in)
 {
-	char buff[MAXNAME];
 	switch (in->type) {
-#define F(T,F,C,P)								\
-		case ( type_##T ):						\
-			P(buff, "%" #F, in->value.F);		\
-			break;
+#define F(T,F,C,P)									\
+		case ( type_##T ):							\
+			return P(out, "%" #F, in->value.F);
 		TYPES
 #undef F
 	default:
-		dbprintf ("Error printing generic type");
-		return;
+		dbprintf ("Error printing generic type\n");
 	}
-	printf("%s: %s\n", in->name, buff);
+	return -1;
 }
 
-void free_args ()
+void free_args()
 {
 	free_generic_type_list(sing->args_list);
 	free (sing->args_list);
@@ -183,13 +180,37 @@ void free_args ()
 	free(sing);
 }
 
-void report_args ()
+static
+void report_args_base(const char start[],
+                      const char formatpair[],
+                      const char close[])
 {
+	printf("%s", start);
+
+	char buff[MAXNAME];
 	for (generic_type *it = begin_generic_type_list(sing->args_list);
-	     it != end_generic_type_list(sing->args_list); ++it)
-		print_gt (it);
+	     it != end_generic_type_list(sing->args_list); ++it) {
+
+		sprintf_gt(buff, it);
+		printf(formatpair, it->name, buff);
+	}
 
 	for (generic_type *it = begin_generic_type_list(sing->reportables);
-	     it != end_generic_type_list(sing->reportables); ++it)
-		print_gt (it);
+	     it != end_generic_type_list(sing->reportables); ++it) {
+
+		sprintf_gt(buff, it);
+		printf(formatpair, it->name, buff);
+
+	}
+	printf("%s", close);
+}
+
+void report_args()
+{
+	report_args_base("","%s: %s\n","");
+}
+
+void report_args_json()
+{
+	report_args_base("{\n","\t\"%s\": %s,\n","}\n");
 }
