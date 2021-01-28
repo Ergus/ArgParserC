@@ -65,6 +65,8 @@ void reset_timer(timer *out);
 typedef char * char_p;
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
+#define PRINT_STRING(buff, FORMAT, input)					\
+	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input);
 
 /* The types must have 3 arguments:
    1) type
@@ -74,7 +76,7 @@ typedef char * char_p;
 #define TYPES									\
 	F(int, d, sscanf, sprintf)					\
 	F(double, lg, sscanf, sprintf)				\
-	F(char_p, s, COPYPTR, sprintf)				\
+	F(char_p, s, COPYPTR, PRINT_STRING)			\
 	F(ttimer, t, create_ttimer, print_ttimer)
 
 // Enum with the defined types
@@ -151,6 +153,7 @@ TYPES
 void init_args(int argc, char **argv);
 void print_gt(generic_type * in);
 void report_args();
+void report_args_json();
 void free_args();
 
 
