@@ -15,16 +15,16 @@
 
 cmake_minimum_required(VERSION 2.8.12)
 
-project (ArgParserC)
+project(ArgParserC)
 
-add_library (argparser argparser.c timer.c)
+add_library(argparser argparser.c timer.c)
 
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
 
 enable_testing()
 
-if (CMAKE_BUILD_TYPE STREQUAL Debug)
+if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
   add_test(NAME test_1 COMMAND test_main 1)
   set_tests_properties(test_1 PROPERTIES
     PASS_REGULAR_EXPRESSION "Error: no enough CL arguments to set vchar_p")
