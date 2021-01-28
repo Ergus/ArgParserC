@@ -97,22 +97,22 @@ typedef struct generic_type {
 	} value;
 } generic_type;
 
-// list container (this is very general)
-#define list_for(T)							\
-	typedef struct T##_list {					\
-		T *list;						\
-		int count;						\
-		int max_size;						\
-	} T##_list;							\
-									\
-	void init_##T##_list (T##_list *in, int max);			\
-	int push_##T##_list (T##_list *in, T *val);			\
-	inline int size_##T##_list (T##_list *in) {return in->count;};	\
+	// list container (this is very general)
+#define list_for(T)														\
+	typedef struct T##_list {											\
+		T *list;														\
+		int count;														\
+		int max_size;													\
+	} T##_list;															\
+																		\
+	void init_##T##_list (T##_list *in, int max);						\
+	int push_##T##_list (T##_list *in, T *val);							\
+	inline int size_##T##_list (T##_list *in) {return in->count;};		\
 	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
-	void free_##T##_list (T##_list *in);				\
-	T *get_##T##_list (T##_list *in, int idx);			\
-	T *begin_##T##_list (T##_list *in);				\
-	T *end_##T##_list (T##_list *in);				\
+	void free_##T##_list (T##_list *in);								\
+	T *get_##T##_list (T##_list *in, int idx);							\
+	T *begin_##T##_list (const T##_list *in);							\
+	T *end_##T##_list (const T##_list *in);								\
 
 list_for(generic_type);
 #undef list_for

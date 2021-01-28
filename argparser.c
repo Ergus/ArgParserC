@@ -56,8 +56,8 @@ global_args *sing = NULL;
 		return &in->list[idx];					\
 	}								\
 									\
-	T *begin_##T##_list (T##_list *in) {return in->list;};		\
-	T *end_##T##_list (T##_list *in) {return &in->list[in->count];}; \
+	T *begin_##T##_list (const T##_list *in) {return in->list;};		\
+	T *end_##T##_list (const T##_list *in) {return &in->list[in->count];}; \
 									\
 
 list_for(generic_type);
@@ -181,36 +181,37 @@ void free_args()
 }
 
 static
-void report_args_base(const char start[],
-                      const char formatpair[],
+void report_args_base(const char start[], const char sep[],
+                      const char formatpair[], // sep, key: value
                       const char close[])
 {
-	printf("%s", start);
-
+	int counter = 0;
 	char buff[MAXNAME];
-	for (generic_type *it = begin_generic_type_list(sing->args_list);
-	     it != end_generic_type_list(sing->args_list); ++it) {
+	const generic_type_list *lists[] = {
+		sing->args_list,
+		sing->reportables,
+		NULL
+	};
 
-		sprintf_gt(buff, it);
-		printf(formatpair, it->name, buff);
+	for (const generic_type_list **list = lists; *list != NULL; ++list) {
+		for (const generic_type *it = begin_generic_type_list(*list);
+			 it != end_generic_type_list(*list);
+			 ++it) {
+
+			sprintf_gt(buff, it);
+			printf(formatpair, (counter++ ? sep : start), it->name, buff);
+		}
 	}
 
-	for (generic_type *it = begin_generic_type_list(sing->reportables);
-	     it != end_generic_type_list(sing->reportables); ++it) {
-
-		sprintf_gt(buff, it);
-		printf(formatpair, it->name, buff);
-
-	}
 	printf("%s", close);
 }
 
 void report_args()
 {
-	report_args_base("","%s: %s\n","");
+	report_args_base("", "\n", "%s%s: %s", "\n");
 }
 
 void report_args_json()
 {
-	report_args_base("{\n","\t\"%s\": %s,\n","}\n");
+	report_args_base("{", ",", "%s\"%s\":%s","}");
 }
