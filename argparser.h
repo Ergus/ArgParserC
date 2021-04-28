@@ -36,7 +36,7 @@ extern "C" {
 #endif // NDEBUG
 #endif //dbprintf
 
-#define MAXLIST 4
+#define MAXLIST 16
 #define MAXNAME 128
 
 typedef struct ttimer {

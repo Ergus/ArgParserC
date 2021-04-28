@@ -20,45 +20,52 @@
 global_args *sing = NULL;
 
 // List containers
-#define list_for(T)							\
-	void init_##T##_list (T##_list *in, int max_size)		\
-	{								\
-		in->list = (T *) calloc (max_size, sizeof (T));		\
-		in->max_size = max_size;				\
-		in->count = 0;						\
-	}								\
-									\
-	int push_##T##_list (T##_list *in, T *value)			\
-	{								\
-		if (in->count + 1 >= in->max_size) {			\
-			in->max_size *= 2;				\
-			dbprintf ("Reallocating array to %d\n", in->max_size); \
-			in->list = realloc(in->list, in->max_size * sizeof(T)); \
-			if (!in->list)					\
-				return -1;				\
-		}							\
-									\
-		in->list[in->count] = *value;				\
-		in->list[in->count];					\
-		return in->count++;					\
-	}								\
-									\
-	void free_##T##_list (T##_list *in)				\
-	{								\
-		free (in->list);					\
-	}								\
-									\
-									\
-	T *get_##T##_list (T##_list *in, int idx)			\
-	{								\
-		if (idx < 0 || idx >= in->count)			\
-			return NULL;					\
-		return &in->list[idx];					\
-	}								\
-									\
+#define list_for(T)														\
+	void init_##T##_list (T##_list *in, int max_size)					\
+	{																	\
+		in->list = (T *) malloc(max_size * sizeof (T));					\
+		in->max_size = max_size;										\
+		in->count = 0;													\
+	}																	\
+																		\
+	int push_##T##_list (T##_list *in, T *value)						\
+	{																	\
+		if (in->count + 1 >= in->max_size) {							\
+			in->max_size *= 2;											\
+			fprintf (stderr, "Reallocating array to %d\n", in->max_size); \
+																		\
+			T *tmp = (T *) malloc(2 * in->max_size * sizeof(T));		\
+			for (size_t i = 0; i < in->max_size; ++i){					\
+				tmp[i] = in->list[i];									\
+			}															\
+			free(in->list);												\
+			in->list = tmp;												\
+																		\
+			if (!in->list)												\
+				return -1;												\
+		}																\
+																		\
+		in->list[in->count] = *value;									\
+		in->list[in->count];											\
+		return in->count++;												\
+	}																	\
+																		\
+	void free_##T##_list (T##_list *in)									\
+	{																	\
+		free(in->list);													\
+	}																	\
+																		\
+																		\
+	T *get_##T##_list (T##_list *in, int idx)							\
+	{																	\
+		if (idx < 0 || idx >= in->count)								\
+			return NULL;												\
+		return &in->list[idx];											\
+	}																	\
+																		\
 	T *begin_##T##_list (const T##_list *in) {return in->list;};		\
 	T *end_##T##_list (const T##_list *in) {return &in->list[in->count];}; \
-									\
+																		\
 
 list_for(generic_type);
 #undef list_for
