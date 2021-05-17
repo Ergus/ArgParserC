@@ -27,12 +27,14 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 
 #ifndef dbprintf
 #ifndef NDEBUG
-	#define dbprintf(...) fprintf (stderr, __VA_ARGS__)
+	#define dbprintf(...) fprintf(stderr, __VA_ARGS__)
 #else
-	#define dbprintf(...) {}
+	#define dbprintf(...)
 #endif // NDEBUG
 #endif //dbprintf
 
