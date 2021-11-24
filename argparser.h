@@ -78,6 +78,7 @@ typedef char * char_p;
 #define TYPES									\
 	F(int, d, sscanf, sprintf)					\
 	F(double, lg, sscanf, sprintf)				\
+	F(size_t, zu, sscanf, sprintf)				\
 	F(char_p, s, COPYPTR, PRINT_STRING)			\
 	F(ttimer, t, create_ttimer, print_ttimer)
 
