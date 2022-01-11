@@ -135,19 +135,19 @@ typedef struct global_args {
 extern global_args *sing;
 
 // Expandable macros to add arguments to parse.
-#define F(T,...) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val);
+#define F(T,...) void set_gt_##T (generic_type *out, const char name[], T val);
 TYPES
 #undef F
 
-#define F(T,...) T create_cl_##T (const char name[MAXNAME]);
+#define F(T,...) T create_cl_##T (const char name[]);
 TYPES
 #undef F
 
-#define F(T,...) T create_optional_cl_##T (const char name[MAXNAME], T def);
+#define F(T,...) T create_optional_cl_##T (const char name[], T def);
 TYPES
 #undef F
 
-#define F(T,...) int create_reportable_##T (const char name[MAXNAME], T value);
+#define F(T,...) int create_reportable_##T (const char name[], T value);
 TYPES
 #undef F
 

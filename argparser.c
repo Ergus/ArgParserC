@@ -82,17 +82,18 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
 
 
 // The rest
-#define F(T,F,C,P) void set_gt_##T (generic_type *out, const char name[MAXNAME], T val) \
-	{								\
-		out->type = type_##T ;					\
-		strncpy (out->name, name, MAXNAME);			\
-		out->value.F = val;					\
+#define F(T,F,C,P)														\
+	void set_gt_##T (generic_type *out, const char name[], T val)		\
+	{																	\
+		out->type = type_##T ;											\
+		strncpy (out->name, name, MAXNAME);								\
+		out->value.F = val;												\
 	}
 TYPES
 #undef F
 
 #define F(T,F,C,P)														\
-	T create_cl_##T (const char name[MAXNAME])							\
+	T create_cl_##T (const char name[])									\
 	{																	\
 		if (sing->args_it >= sing->argc) {								\
 			dbprintf ("Error: no enough CL arguments to set %s (arg: %d) \n", \
@@ -112,29 +113,30 @@ TYPES
 TYPES
 #undef F
 
-#define F(T,F,C,P)											\
-	T create_optional_cl_##T (const char *name, T def)		\
-	{														\
-		T val = def;										\
-															\
-		if (sing->args_it < sing->argc) {					\
-			C(sing->argv[sing->args_it++], "%" #F, &val);	\
-		}													\
-															\
-		generic_type out;									\
-		set_gt_##T (&out, name, val);						\
-		push_generic_type_list (sing->args_list, &out);		\
-															\
-		return val;											\
+#define F(T,F,C,P)												\
+	T create_optional_cl_##T (const char name[], T def)			\
+	{															\
+		T val = def;											\
+																\
+		if (sing->args_it < sing->argc) {						\
+			C(sing->argv[sing->args_it++], "%" #F, &val);		\
+		}														\
+																\
+		generic_type out;										\
+		set_gt_##T (&out, name, val);							\
+		push_generic_type_list (sing->args_list, &out);			\
+																\
+		return val;												\
 	}
 TYPES
 #undef F
 
 
-#define F(T,F,C,P) int create_reportable_##T (const char *name, T val)	\
-	{								\
-		generic_type out;					\
-		set_gt_##T (&out, name, val);				\
+#define F(T,F,C,P)												 \
+	int create_reportable_##T (const char name[], T val)		 \
+	{															 \
+		generic_type out;										 \
+		set_gt_##T (&out, name, val);							 \
 		return push_generic_type_list (sing->reportables, &out); \
 	}
 TYPES
@@ -187,7 +189,6 @@ void free_args()
 	free(sing);
 }
 
-static
 void report_args_base(const char start[], const char sep[],
                       const char formatpair[], // sep, key: value
                       const char close[])
