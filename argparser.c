@@ -86,7 +86,7 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
 #define F(T,F,C,P)														\
 	void set_gt_##T (generic_type *out, const char name[], T val)		\
 	{																	\
-		out->type = type_##T ;											\
+		out->type = T##_type_id ;											\
 		strncpy (out->name, name, MAXNAME);								\
 		out->value.F = val;												\
 	}
@@ -148,7 +148,7 @@ int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 {
 	switch (in->type) {
 #define F(T,F,C,P)											\
-		case ( type_##T ):									\
+		case ( T##_type_id ):									\
 			return P(out, maxsize, "%" #F, in->value.F);
 		TYPES
 #undef F

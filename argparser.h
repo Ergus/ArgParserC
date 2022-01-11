@@ -86,9 +86,10 @@ typedef char * char_p;
 typedef struct generic_type {
 	// Enum with the defined types
 	enum type_t {
-		#define F(T,...) type_##T,
+		#define F(T,...) T##_type_id,
 		TYPES
 		#undef F
+		
 	} type;
 
 	char name[MAXNAME];
