@@ -17,7 +17,7 @@
 
 #include "argparser.h"
 
-global_args *sing = NULL;
+global_args_t *sing = NULL;
 
 // List containers
 #define list_for(T)														\
@@ -152,15 +152,16 @@ void init_args(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	sing = (global_args *) malloc (sizeof(global_args));
+	sing = (global_args_t *) malloc(sizeof(global_args_t));
 	sing->argc = argc;
 	sing->argv = argv;
 	sing->args_it = 0;
 	sing->args_list =
-		(generic_type_list *) malloc (sizeof(generic_type_list));
+		(generic_type_list *) malloc(sizeof(generic_type_list));
 	sing->reportables =
-		(generic_type_list *) malloc (sizeof(generic_type_list));
-	sing->ttimers = (ttimer_list *) malloc (sizeof(ttimer_list));
+		(generic_type_list *) malloc(sizeof(generic_type_list));
+	sing->ttimers =
+		(ttimer_list *) malloc(sizeof(ttimer_list));
 
 	init_generic_type_list (sing->args_list, MAXLIST);
 	init_generic_type_list (sing->reportables, MAXLIST);

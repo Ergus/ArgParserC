@@ -124,31 +124,23 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
                                            const char name[]);
 
 // Arguments part
-typedef struct global_args {
+typedef struct global_args_t {
 	int argc;
 	char **argv;
 	int args_it;
 	generic_type_list *args_list;
 	generic_type_list *reportables;
 	ttimer_list *ttimers;
-} global_args;
+} global_args_t;
 
-extern global_args *sing;
+extern global_args_t *sing;
 
 // Expandable macros to add arguments to parse.
-#define F(T,...) void set_gt_##T (generic_type *out, const char name[], T val);
-TYPES
-#undef F
-
-#define F(T,...) T create_cl_##T (const char name[]);
-TYPES
-#undef F
-
-#define F(T,...) T create_optional_cl_##T (const char name[], T def);
-TYPES
-#undef F
-
-#define F(T,...) int create_reportable_##T (const char name[], T value);
+#define F(T,...) \
+	void set_gt_##T (generic_type *out, const char name[], T val);	\
+	T create_cl_##T (const char name[]);							\
+	T create_optional_cl_##T (const char name[], T def);			\
+	int create_reportable_##T (const char name[], T value);
 TYPES
 #undef F
 
@@ -159,7 +151,6 @@ int sprintf_gt(char out[], const generic_type *in);
 void report_args();
 void report_args_json();
 void free_args();
-
 
 #ifdef __cplusplus
 }
