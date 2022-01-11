@@ -38,7 +38,7 @@ double getNS(const struct timespec *ts)
 }
 
 
-// ttimer functions
+// ttimer functions (Specializations).
 static
 void reset_ttimer(ttimer *out)
 {

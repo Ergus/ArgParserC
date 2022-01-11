@@ -28,7 +28,7 @@ global_args_t *sing = NULL;
 		in->count = 0;													\
 	}																	\
 																		\
-	T *push_##T##_list (T##_list *in, T *value)						\
+	T *push_##T##_list (T##_list *in, T *value)							\
 	{																	\
 		if (in->count + 1 >= in->max_size) {							\
 			in->max_size *= 2;											\
@@ -42,7 +42,7 @@ global_args_t *sing = NULL;
 			in->list = tmp;												\
 																		\
 			if (!in->list)												\
-				return NULL;												\
+				return NULL;											\
 		}																\
 																		\
 		in->list[in->count] = *value;									\
@@ -131,11 +131,11 @@ TYPES
 
 
 #define F(T,F,C,P)														\
-	T create_reportable_##T (const char name[], T val)				\
+	T create_reportable_##T (const char name[], T val)					\
 	{																	\
 		generic_type out;												\
 		set_gt_##T(&out, name, val);									\
-		return push_generic_type_list (sing->reportables, &out)->value.F;		\
+		return push_generic_type_list (sing->reportables, &out)->value.F; \
 	}
 TYPES
 #undef F
@@ -162,8 +162,8 @@ void copy_generic_type(generic_type *out, const generic_type *in)
 	strcpy(out->name, in->name);
 
 	if (out->type == char_p_type_id) {
-		out->value.s = out->_buffer;
-		snprintf(out->value.s, MAXSTRSIZE, "%s", in->value.s);
+		out->value.s = out->_buffer;           // point to self internal buffer
+		snprintf(out->value.s, MAXSTRSIZE, "%s", in->value.s); // copy text then
 	} else {
 		out->value = in->value;
 	}

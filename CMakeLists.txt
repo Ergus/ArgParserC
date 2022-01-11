@@ -33,8 +33,10 @@ if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
   set_tests_properties(test_2 PROPERTIES
     PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set vdouble_1")
 
-  add_test(NAME test_3 COMMAND test_main 1 name 2.6)
+  add_test(NAME test_3 COMMAND test_main 1 name1 2.6)
   add_test(NAME test_4 COMMAND test_main 2.5 name1 2.5 5 3 name2)
   add_test(NAME test_5 COMMAND test_main 1 2 3 4 5 6)
-  add_test(NAME test_6 COMMAND test_main 1 2 3 4 5 6 7)
+  add_test(NAME test_6 COMMAND test_main 1 2 3 4 5 6 "7 8")
+  add_test(NAME test_7 COMMAND test_main 1 2 3 4 5 6 "7 8" 9)
+
 endif ()
