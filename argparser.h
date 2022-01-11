@@ -42,6 +42,7 @@ extern "C" {
 #define MAXNAME 128
 #define MAXSTRSIZE 256
 
+// timer
 typedef struct ttimer {
 	char name[MAXNAME];
 	struct timespec _startTime;
@@ -53,7 +54,6 @@ typedef struct timer {
 	int tidx;
 } timer;
 
-/*! Timer functions. */
 timer create_timer(const char *name);
 double getNS_timer(const timer *in);
 void print_timer(const timer *in);
@@ -61,6 +61,7 @@ void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);
 
+// generic_type
 typedef char * char_p;
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
@@ -117,14 +118,12 @@ typedef struct generic_type {
 	T *begin_##T##_list (const T##_list *in);							\
 	T *end_##T##_list (const T##_list *in);								\
 																		\
-	int snprintf_##T(char out[], size_t maxsize, const T *in)
+	int snprintf_##T(char out[], size_t maxsize, const T *in);			\
+	T *get_named_##T##_list (T##_list *in, const char name[]);			\
 
 list_for(generic_type);
 list_for(ttimer);
 #undef list_for
-
-generic_type *get_named_generic_type_list (generic_type_list *in,
-                                           const char name[]);
 
 // Arguments part
 #define GLOBALS									\
@@ -144,12 +143,12 @@ typedef struct global_args_t {
 extern global_args_t *sing;
 
 // Expandable macros to add arguments to parse.
-#define F(T,...) \
+#define F(T,...)													\
 	void set_gt_##T (generic_type *out, const char name[], T val);	\
 	T create_cl_##T (const char name[]);							\
 	T create_optional_cl_##T (const char name[], T def);			\
 	int create_reportable_##T (const char name[], T value);
-TYPES
+	TYPES
 #undef F
 
 

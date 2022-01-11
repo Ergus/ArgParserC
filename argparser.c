@@ -66,20 +66,17 @@ global_args_t *sing = NULL;
 	T *begin_##T##_list (const T##_list *in) {return in->list;};		\
 	T *end_##T##_list (const T##_list *in) {return &in->list[in->count];}; \
 																		\
+	T *get_named_##T##_list (T##_list *in, const char name[])			\
+	{																	\
+		for (T *it = begin_##T##_list(in); it != end_##T##_list(in); ++it) \
+			if (strcmp (name, it->name) == 0)							\
+				return it;												\
+		return NULL;													\
+	}																	\
 
 list_for(generic_type);
 list_for(ttimer);
 #undef list_for
-
-generic_type *get_named_generic_type_list (generic_type_list *in,
-                                           const char name[])
-{
-	for (generic_type *it = begin_generic_type_list(in);
-	     it != end_generic_type_list(in); ++it)
-		if (strcmp (name, it->name) == 0)
-			return it;
-	return NULL;
-}
 
 
 // The rest
