@@ -21,7 +21,7 @@ global_args_t *sing = NULL;
 
 // List containers
 #define list_for(T)														\
-	void init_##T##_list (T##_list *in, int max_size)					\
+	void init_##T##_list (T##_list *in, size_t max_size)				\
 	{																	\
 		in->list = (T *) malloc(max_size * sizeof (T));					\
 		in->max_size = max_size;										\
@@ -32,7 +32,7 @@ global_args_t *sing = NULL;
 	{																	\
 		if (in->count + 1 >= in->max_size) {							\
 			in->max_size *= 2;											\
-			fprintf (stderr, "Reallocating array to %d\n", in->max_size); \
+			dbprintf ("Reallocating array to %d\n", in->max_size); \
 																		\
 			T *tmp = (T *) malloc(2 * in->max_size * sizeof(T));		\
 			for (size_t i = 0; i < in->max_size; ++i){					\
@@ -56,9 +56,9 @@ global_args_t *sing = NULL;
 	}																	\
 																		\
 																		\
-	T *get_##T##_list (T##_list *in, int idx)							\
+	T *get_##T##_list (T##_list *in, size_t idx)						\
 	{																	\
-		if (idx < 0 || idx >= in->count)								\
+		if (idx >= in->count)											\
 			return NULL;												\
 		return &in->list[idx];											\
 	}																	\

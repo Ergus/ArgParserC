@@ -107,12 +107,12 @@ typedef struct generic_type {
 		int max_size;													\
 	} T##_list;															\
 																		\
-	void init_##T##_list (T##_list *in, int max);						\
+	void init_##T##_list (T##_list *in, size_t max);					\
 	int push_##T##_list (T##_list *in, T *val);							\
 	inline int size_##T##_list (T##_list *in) {return in->count;};		\
 	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
 	void free_##T##_list (T##_list *in);								\
-	T *get_##T##_list (T##_list *in, int idx);							\
+	T *get_##T##_list (T##_list *in, size_t idx);						\
 	T *begin_##T##_list (const T##_list *in);							\
 	T *end_##T##_list (const T##_list *in);								\
 																		\
