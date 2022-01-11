@@ -110,7 +110,7 @@ typedef struct generic_type {
 	} T##_list;															\
 																		\
 	void init_##T##_list (T##_list *in, size_t max);					\
-	int push_##T##_list (T##_list *in, T *val);							\
+	T *push_##T##_list (T##_list *in, T *val);							\
 	inline int size_##T##_list (T##_list *in) {return in->count;};		\
 	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
 	void free_##T##_list (T##_list *in);								\
@@ -120,6 +120,7 @@ typedef struct generic_type {
 																		\
 	int snprintf_##T(char out[], size_t maxsize, const T *in);			\
 	T *get_named_##T##_list (T##_list *in, const char name[]);			\
+	void copy_##T(T *out, const T *in);
 
 list_for(generic_type);
 list_for(ttimer);
@@ -147,7 +148,7 @@ extern global_args_t *sing;
 	void set_gt_##T (generic_type *out, const char name[], T val);	\
 	T create_cl_##T (const char name[]);							\
 	T create_optional_cl_##T (const char name[], T def);			\
-	int create_reportable_##T (const char name[], T value);
+	T create_reportable_##T (const char name[], T value);
 	TYPES
 #undef F
 

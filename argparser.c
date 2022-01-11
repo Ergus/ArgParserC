@@ -28,7 +28,7 @@ global_args_t *sing = NULL;
 		in->count = 0;													\
 	}																	\
 																		\
-	int push_##T##_list (T##_list *in, T *value)						\
+	T *push_##T##_list (T##_list *in, T *value)						\
 	{																	\
 		if (in->count + 1 >= in->max_size) {							\
 			in->max_size *= 2;											\
@@ -42,12 +42,12 @@ global_args_t *sing = NULL;
 			in->list = tmp;												\
 																		\
 			if (!in->list)												\
-				return -1;												\
+				return NULL;												\
 		}																\
 																		\
 		in->list[in->count] = *value;									\
-		in->list[in->count];											\
-		return in->count++;												\
+		copy_##T (&in->list[in->count], value);							\
+		return &in->list[in->count++];									\
 	}																	\
 																		\
 	void free_##T##_list (T##_list *in)									\
@@ -131,16 +131,16 @@ TYPES
 
 
 #define F(T,F,C,P)														\
-	int create_reportable_##T (const char name[], T val)				\
+	T create_reportable_##T (const char name[], T val)				\
 	{																	\
 		generic_type out;												\
 		set_gt_##T(&out, name, val);									\
-		return push_generic_type_list (sing->reportables, &out);		\
+		return push_generic_type_list (sing->reportables, &out)->value.F;		\
 	}
 TYPES
 #undef F
 
-
+// Specializations
 int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 {
 	assert(in->type < total_type_ids);
@@ -156,6 +156,13 @@ int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 	return -1;
 }
 
+void copy_generic_type(generic_type *out, const generic_type *in)
+{
+	memcpy(out, in, sizeof(generic_type));
+	/* if (out->type == char_p_type_id) { */
+	/* 	out->value.s = out->_buffer; */
+	/* } */
+}
 
 // Implemented (no generated) functions.
 void init_args(int argc, char **argv)

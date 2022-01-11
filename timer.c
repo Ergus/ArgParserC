@@ -52,6 +52,11 @@ int snprintf_ttimer(char out[], size_t maxsize, const ttimer *in)
 	return snprintf(out, maxsize, "%g", getNS(&in->_accumulated));
 }
 
+void copy_ttimer(ttimer *out, const ttimer *in)
+{
+	*out = *in;
+}
+
 // timer functions (public)
 double getNS_timer(const timer *in)
 {
@@ -80,7 +85,8 @@ timer create_timer(const char *name)
 
 	reset_ttimer(&init);
 	strncpy (init.name, name, MAXNAME);
-	out.tidx = push_ttimer_list (sing->ttimers, &init);
+	ttimer *pushed = push_ttimer_list (sing->ttimers, &init);
+	out.tidx = pushed - begin_ttimer_list(sing->ttimers);
 	assert(out.tidx >= 0);
 
 	start_timer(&out);
