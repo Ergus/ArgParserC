@@ -32,7 +32,7 @@ global_args_t *sing = NULL;
 	{																	\
 		if (in->count + 1 >= in->max_size) {							\
 			in->max_size *= 2;											\
-			dbprintf ("Reallocating array to %d\n", in->max_size); \
+			dbprintf ("Reallocating array to %d\n", in->max_size);		\
 																		\
 			T *tmp = (T *) malloc(2 * in->max_size * sizeof(T));		\
 			for (size_t i = 0; i < in->max_size; ++i){					\
@@ -86,7 +86,7 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
 #define F(T,F,C,P)														\
 	void set_gt_##T (generic_type *out, const char name[], T val)		\
 	{																	\
-		out->type = T##_type_id ;											\
+		out->type = T##_type_id ;										\
 		strncpy (out->name, name, MAXNAME);								\
 		out->value.F = val;												\
 	}
@@ -146,8 +146,9 @@ TYPES
 
 int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 {
+	assert(in->type < total_type_ids);
 	switch (in->type) {
-#define F(T,F,C,P)											\
+#define F(T,F,C,P)												\
 		case ( T##_type_id ):									\
 			return P(out, maxsize, "%" #F, in->value.F);
 		TYPES
@@ -197,6 +198,7 @@ void free_args()
 	sing = NULL;
 }
 
+static
 void report_args_base(const char start[], const char sep[],
                       const char formatpair[], // sep, key: value
                       const char close[])

@@ -28,7 +28,7 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <assert.h>
 
 #ifndef dbprintf
 #ifndef NDEBUG
@@ -89,7 +89,7 @@ typedef struct generic_type {
 		#define F(T,...) T##_type_id,
 		TYPES
 		#undef F
-		
+		total_type_ids
 	} type;
 
 	char name[MAXNAME];
