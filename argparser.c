@@ -94,7 +94,7 @@ TYPES
 	T create_cl_##T (const char name[])									\
 	{																	\
 		if (sing->args_it >= sing->argc) {								\
-			dbprintf ("Error: no enough CL arguments to set %s (arg: %d) \n", \
+			dbprintf ("Error: no enough CL arguments to set %s (arg: %d)\n", \
 			          name, sing->args_it);								\
 			exit (1);													\
 		}																\
@@ -147,7 +147,7 @@ int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 	switch (in->type) {
 #define F(T,F,C,P)												\
 		case ( T##_type_id ):									\
-			return P(out, maxsize, "%" #F, in->value.F);
+			return snprintf(out, maxsize, P, in->value.F);
 		TYPES
 #undef F
 	default:
@@ -158,10 +158,15 @@ int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 
 void copy_generic_type(generic_type *out, const generic_type *in)
 {
-	memcpy(out, in, sizeof(generic_type));
-	/* if (out->type == char_p_type_id) { */
-	/* 	out->value.s = out->_buffer; */
-	/* } */
+	out->type = in->type;
+	strcpy(out->name, in->name);
+
+	if (out->type == char_p_type_id) {
+		out->value.s = out->_buffer;
+		snprintf(out->value.s, MAXSTRSIZE, "%s", in->value.s);
+	} else {
+		out->value = in->value;
+	}
 }
 
 // Implemented (no generated) functions.

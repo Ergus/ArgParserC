@@ -25,19 +25,20 @@ int main(int argc, char *argv[])
 {
 	init_args (argc, argv);
 
-	int v_int = create_cl_int ("vint");
-	char *v_char_p = create_cl_char_p ("vchar_p");
-	double v_double = create_cl_double ("vdouble");
+	int v_int_1 = create_cl_int ("vint_1");
+	char *v_char_1 = create_cl_char_p ("vchar_1");
+	double v_double_1 = create_cl_double ("vdouble_1");
 
-	int o_int = create_optional_cl_int ("oint", -1);
-	int o_double = create_optional_cl_double ("odouble", 0.5);
-	char *o_char = create_optional_cl_char_p ("ochar_p", NULL);
+	int o_int_1 = create_optional_cl_int ("oint_1", -1);
+	double o_double_1 = create_optional_cl_double ("odouble_1", 0.5);
+	char *o_char_1 = create_optional_cl_char_p ("ochar_p_1", NULL);
+	char *o_char_2 = create_optional_cl_char_p ("ochar_p_2", "");
 
 	timer t = create_timer("My_timer");
 	create_reportable_int ("reportable", argc);
 
 	printf ("Second timer to trigger\n");
-	create_reportable_double ("Reportable2", v_double / o_double);
+	create_reportable_double ("Reportable2", v_double_1 / o_double_1);
 
 	timer t2 = create_timer("My_timer2"); // New timer to trigger realloc
 	usleep (1000);

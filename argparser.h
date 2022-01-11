@@ -66,9 +66,6 @@ typedef char * char_p;
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
 
-#define COPY_STRING(buff, FORMAT, input)				\
-	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input)
-
 #define PRINT_STRING(buff, MAXSIZE, FORMAT, input)		\
 	snprintf(buff, MAXSIZE, "\"" FORMAT "\"", input)
 
@@ -78,10 +75,10 @@ typedef char * char_p;
    3) function to convert FROM char)
    4) function to convert TO char (default printf) */
 #define TYPES										\
-	F(int, d, sscanf, snprintf)						\
-	F(double, lg, sscanf, snprintf)					\
-	F(size_t, zu, sscanf, snprintf)					\
-	F(char_p, s, COPYPTR, PRINT_STRING)
+	F(int, d, sscanf, "%d")							\
+	F(double, lg, sscanf, "%lf")					\
+	F(size_t, zu, sscanf, "%zu")					\
+	F(char_p, s, COPYPTR, "\"%s\"")
 
 // Generic type (this is the key of everything)
 typedef struct generic_type {
@@ -94,6 +91,7 @@ typedef struct generic_type {
 	} type;
 
 	char name[MAXNAME];
+	char _buffer[MAXSTRSIZE];
 	union {
 		#define F(T,F,...) T F;
 		TYPES
