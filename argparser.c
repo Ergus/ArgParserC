@@ -144,6 +144,21 @@ TYPES
 #undef F
 
 
+int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
+{
+	switch (in->type) {
+#define F(T,F,C,P)											\
+		case ( type_##T ):									\
+			return P(out, maxsize, "%" #F, in->value.F);
+		TYPES
+#undef F
+	default:
+		dbprintf ("Error printing generic type\n");
+	}
+	return -1;
+}
+
+
 // Implemented (no generated) functions.
 void init_args(int argc, char **argv)
 {
@@ -170,20 +185,6 @@ void init_args(int argc, char **argv)
 	create_cl_char_p ("Executable");
 }
 
-int sprintf_gt(char out[], const generic_type *in)
-{
-	switch (in->type) {
-#define F(T,F,C,P)								\
-		case ( type_##T ):							\
-			return P(out, "%" #F, in->value.F);
-		TYPES
-#undef F
-	default:
-		dbprintf ("Error printing generic type\n");
-	}
-	return -1;
-}
-
 void free_args()
 {
 	free_generic_type_list(sing->args_list);
@@ -201,22 +202,15 @@ void report_args_base(const char start[], const char sep[],
                       const char close[])
 {
 	int counter = 0;
-	char buff[MAXNAME];
-	const generic_type_list *lists[] = {
-		sing->args_list,
-		sing->reportables,
-		NULL
-	};
+	char buff[MAXSTRSIZE];
 
-	for (const generic_type_list **list = lists; *list != NULL; ++list) {
-		for (const generic_type *it = begin_generic_type_list(*list);
-			 it != end_generic_type_list(*list);
-			 ++it) {
-
-			sprintf_gt(buff, it);
-			printf(formatpair, (counter++ ? sep : start), it->name, buff);
-		}
+#define F(T, N)															\
+	for (const T *it = begin_##T##_list(sing->N); it != end_##T##_list(sing->N); ++it) { \
+		snprintf_##T(buff, MAXSTRSIZE, it);								\
+		printf(formatpair, (counter++ ? sep : start), it->name, buff);	\
 	}
+	GLOBALS
+#undef F
 
 	printf("%s", close);
 }

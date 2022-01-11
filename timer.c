@@ -47,11 +47,9 @@ void reset_ttimer(ttimer *out)
 	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
 }
 
-static
-int print_ttimer(char *out, const char *format, ttimer in)
+int snprintf_ttimer(char out[], size_t maxsize, const ttimer *in)
 {
-	assert(strcmp(format, "%t") == 0);
-	return sprintf(out, "%g", getNS(&in._accumulated));
+	return snprintf(out, maxsize, "%g", getNS(&in->_accumulated));
 }
 
 // timer functions (public)

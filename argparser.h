@@ -68,8 +68,8 @@ typedef char * char_p;
 #define COPY_STRING(buff, FORMAT, input)				\
 	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input)
 
-#define PRINT_STRING(buff, FORMAT, input)					\
-	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input)
+#define PRINT_STRING(buff, MAXSIZE, FORMAT, input)		\
+	snprintf(buff, MAXSIZE, "\"" FORMAT "\"", input)
 
 /* The types must have 3 arguments:
    1) type
@@ -77,9 +77,9 @@ typedef char * char_p;
    3) function to convert FROM char)
    4) function to convert TO char (default printf) */
 #define TYPES										\
-	F(int, d, sscanf, sprintf)						\
-	F(double, lg, sscanf, sprintf)					\
-	F(size_t, zu, sscanf, sprintf)					\
+	F(int, d, sscanf, snprintf)						\
+	F(double, lg, sscanf, snprintf)					\
+	F(size_t, zu, sscanf, snprintf)					\
 	F(char_p, s, COPYPTR, PRINT_STRING)
 
 // Generic type (this is the key of everything)
@@ -115,6 +115,8 @@ typedef struct generic_type {
 	T *get_##T##_list (T##_list *in, int idx);							\
 	T *begin_##T##_list (const T##_list *in);							\
 	T *end_##T##_list (const T##_list *in);								\
+																		\
+	int snprintf_##T(char out[], size_t maxsize, const T *in)
 
 list_for(generic_type);
 list_for(ttimer);
@@ -124,13 +126,18 @@ generic_type *get_named_generic_type_list (generic_type_list *in,
                                            const char name[]);
 
 // Arguments part
+#define GLOBALS									\
+	F(generic_type, args_list)					\
+	F(generic_type, reportables)				\
+	F(ttimer, ttimers)
+
 typedef struct global_args_t {
 	int argc;
 	char **argv;
 	int args_it;
-	generic_type_list *args_list;
-	generic_type_list *reportables;
-	ttimer_list *ttimers;
+#define F(T, N) T##_list *N;
+	GLOBALS
+#undef F
 } global_args_t;
 
 extern global_args_t *sing;
@@ -147,7 +154,6 @@ TYPES
 
 /*! General functions. */
 void init_args(int argc, char **argv);
-int sprintf_gt(char out[], const generic_type *in);
 void report_args();
 void report_args_json();
 void free_args();
