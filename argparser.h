@@ -82,16 +82,15 @@ typedef char * char_p;
 	F(char_p, s, COPYPTR, PRINT_STRING)			\
 	F(ttimer, t, create_ttimer, print_ttimer)
 
-// Enum with the defined types
-typedef enum type_t {
-	#define F(T,...) type_##T,
-	TYPES
-	#undef F
-} type_t;
-
 // Generic type (this is the key of everything)
 typedef struct generic_type {
-	type_t type;
+	// Enum with the defined types
+	enum type_t {
+		#define F(T,...) type_##T,
+		TYPES
+		#undef F
+	} type;
+
 	char name[MAXNAME];
 	union {
 		#define F(T,F,...) T F;
