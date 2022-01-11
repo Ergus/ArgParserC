@@ -31,22 +31,6 @@ void getTime(struct timespec *ts)
 	}
 }
 
-void reset_ttimer(ttimer *out)
-{
-	out->_startTime.tv_nsec = 0; out->_startTime.tv_sec = 0;
-	out->_endTime.tv_nsec = 0; out->_endTime.tv_sec = 0;
-	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
-}
-
-
-// ATM: the parameters are ignored and timer always initialized to zero.
-int create_ttimer(const char *ignore, const char *format, ttimer *out)
-{
-	assert(strcmp(format, "%t") == 0);
-	reset_ttimer(out);
-	return 1;
-}
-
 static
 double getNS(const struct timespec *ts)
 {
@@ -54,29 +38,38 @@ double getNS(const struct timespec *ts)
 }
 
 
+// ttimer functions
+static
+void reset_ttimer(ttimer *out)
+{
+	out->_startTime.tv_nsec = 0; out->_startTime.tv_sec = 0;
+	out->_endTime.tv_nsec = 0; out->_endTime.tv_sec = 0;
+	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
+}
+
+static
 int print_ttimer(char *out, const char *format, ttimer in)
 {
 	assert(strcmp(format, "%t") == 0);
 	return sprintf(out, "%g", getNS(&in._accumulated));
 }
 
-
+// timer functions (public)
 double getNS_timer(const timer *in)
 {
-	return getNS(&get_generic_type_list(sing->reportables, in->tidx)->value.t._accumulated);
+	return getNS(&get_ttimer_list(sing->ttimers, in->tidx)->_accumulated);
 }
 
 
 void reset_timer(timer *out)
 {
-	reset_ttimer(&get_generic_type_list(sing->reportables, out->tidx)->value.t);
+	reset_ttimer(get_ttimer_list(sing->ttimers, out->tidx));
 }
 
 
 void start_timer(timer *out)
 {
-	ttimer *reportable =
-		&get_generic_type_list(sing->reportables, out->tidx)->value.t;
+	ttimer *reportable = get_ttimer_list(sing->ttimers, out->tidx);
 
 	getTime(&reportable->_startTime);
 }
@@ -86,9 +79,10 @@ timer create_timer(const char *name)
 {
 	timer out;
 	ttimer init;
-	create_ttimer(NULL, "%t", &init);
-	out.tidx = create_reportable_ttimer(name, init);
 
+	reset_ttimer(&init);
+	strncpy (init.name, name, MAXNAME);
+	out.tidx = push_ttimer_list (sing->ttimers, &init);
 	assert(out.tidx >= 0);
 
 	start_timer(&out);
@@ -98,8 +92,7 @@ timer create_timer(const char *name)
 
 void stop_timer(timer *out)
 {
-	ttimer *reportable =
-		&get_generic_type_list(sing->reportables, out->tidx)->value.t;
+	ttimer *reportable = get_ttimer_list(sing->ttimers, out->tidx);
 
 	getTime(&reportable->_endTime);
 

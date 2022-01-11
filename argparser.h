@@ -40,17 +40,14 @@ extern "C" {
 
 #define MAXLIST 16
 #define MAXNAME 128
+#define MAXSTRSIZE 256
 
 typedef struct ttimer {
+	char name[MAXNAME];
 	struct timespec _startTime;
 	struct timespec _endTime;
 	struct timespec _accumulated;
 } ttimer;
-
-// ATM: the parameters are ignored and timer always initialized to zero.
-void reset_ttimer(ttimer *out);
-int create_ttimer(const char *, const char *format, ttimer *out);
-int print_ttimer(char *out, const char *format, ttimer in);
 
 typedef struct timer {
 	int tidx;
@@ -67,6 +64,10 @@ void reset_timer(timer *out);
 typedef char * char_p;
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
+
+#define COPY_STRING(buff, FORMAT, input)				\
+	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input)
+
 #define PRINT_STRING(buff, FORMAT, input)					\
 	snprintf(buff, MAXNAME, "\"" FORMAT "\"", input)
 
@@ -75,12 +76,11 @@ typedef char * char_p;
    2) format for printf without %, should not be repeated
    3) function to convert FROM char)
    4) function to convert TO char (default printf) */
-#define TYPES									\
-	F(int, d, sscanf, sprintf)					\
-	F(double, lg, sscanf, sprintf)				\
-	F(size_t, zu, sscanf, sprintf)				\
-	F(char_p, s, COPYPTR, PRINT_STRING)			\
-	F(ttimer, t, create_ttimer, print_ttimer)
+#define TYPES										\
+	F(int, d, sscanf, sprintf)						\
+	F(double, lg, sscanf, sprintf)					\
+	F(size_t, zu, sscanf, sprintf)					\
+	F(char_p, s, COPYPTR, PRINT_STRING)
 
 // Generic type (this is the key of everything)
 typedef struct generic_type {
@@ -117,6 +117,7 @@ typedef struct generic_type {
 	T *end_##T##_list (const T##_list *in);								\
 
 list_for(generic_type);
+list_for(ttimer);
 #undef list_for
 
 generic_type *get_named_generic_type_list (generic_type_list *in,
@@ -129,6 +130,7 @@ typedef struct global_args {
 	int args_it;
 	generic_type_list *args_list;
 	generic_type_list *reportables;
+	ttimer_list *ttimers;
 } global_args;
 
 extern global_args *sing;

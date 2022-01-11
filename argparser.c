@@ -68,6 +68,7 @@ global_args *sing = NULL;
 																		\
 
 list_for(generic_type);
+list_for(ttimer);
 #undef list_for
 
 generic_type *get_named_generic_type_list (generic_type_list *in,
@@ -132,12 +133,12 @@ TYPES
 #undef F
 
 
-#define F(T,F,C,P)												 \
-	int create_reportable_##T (const char name[], T val)		 \
-	{															 \
-		generic_type out;										 \
-		set_gt_##T (&out, name, val);							 \
-		return push_generic_type_list (sing->reportables, &out); \
+#define F(T,F,C,P)														\
+	int create_reportable_##T (const char name[], T val)				\
+	{																	\
+		generic_type out;												\
+		set_gt_##T(&out, name, val);									\
+		return push_generic_type_list (sing->reportables, &out);		\
 	}
 TYPES
 #undef F
@@ -159,9 +160,11 @@ void init_args(int argc, char **argv)
 		(generic_type_list *) malloc (sizeof(generic_type_list));
 	sing->reportables =
 		(generic_type_list *) malloc (sizeof(generic_type_list));
+	sing->ttimers = (ttimer_list *) malloc (sizeof(ttimer_list));
 
 	init_generic_type_list (sing->args_list, MAXLIST);
 	init_generic_type_list (sing->reportables, MAXLIST);
+	init_ttimer_list (sing->ttimers, MAXLIST);
 
 	create_cl_char_p ("Executable");
 }
@@ -169,7 +172,7 @@ void init_args(int argc, char **argv)
 int sprintf_gt(char out[], const generic_type *in)
 {
 	switch (in->type) {
-#define F(T,F,C,P)									\
+#define F(T,F,C,P)								\
 		case ( type_##T ):							\
 			return P(out, "%" #F, in->value.F);
 		TYPES
@@ -183,10 +186,13 @@ int sprintf_gt(char out[], const generic_type *in)
 void free_args()
 {
 	free_generic_type_list(sing->args_list);
-	free (sing->args_list);
+	free(sing->args_list);
 	free_generic_type_list(sing->reportables);
-	free (sing->reportables);
+	free(sing->reportables);
+	free_ttimer_list(sing->ttimers);
+	free(sing->ttimers);
 	free(sing);
+	sing = NULL;
 }
 
 void report_args_base(const char start[], const char sep[],
