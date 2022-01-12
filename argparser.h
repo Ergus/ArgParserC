@@ -131,9 +131,9 @@ typedef struct global_args_t {
 	int argc;
 	char **argv;
 	int args_it;
-#define F(T, N) T##_list *N;
+	#define F(T, N) T##_list *N;
 	GLOBALS
-#undef F
+	#undef F
 } global_args_t;
 
 extern global_args_t *sing;

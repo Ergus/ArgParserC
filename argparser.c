@@ -88,11 +88,8 @@ list_for(ttimer);
 		out->type = T##_type_id ;										\
 		strncpy (out->name, name, MAXNAME);								\
 		out->value.F = val;												\
-	}
-TYPES
-#undef F
-
-#define F(T,F,C,P)														\
+	}																	\
+																		\
 	T create_cl_##T (const char name[])									\
 	{																	\
 		if (sing->args_it >= sing->argc) {								\
@@ -109,30 +106,23 @@ TYPES
 		push_generic_type_list (sing->args_list, &out);					\
 																		\
 		return val;														\
-	}
-TYPES
-#undef F
-
-#define F(T,F,C,P)												\
-	T create_optional_cl_##T (const char name[], T def)			\
-	{															\
-		T val = def;											\
-																\
-		if (sing->args_it < sing->argc) {						\
-			C(sing->argv[sing->args_it++], "%" #F, &val);		\
-		}														\
-																\
-		generic_type out;										\
-		set_gt_##T (&out, name, val);							\
-		push_generic_type_list (sing->args_list, &out);			\
-																\
-		return val;												\
-	}
-TYPES
-#undef F
-
-
-#define F(T,F,C,P)														\
+	}																	\
+																		\
+	T create_optional_cl_##T (const char name[], T def)					\
+	{																	\
+		T val = def;													\
+																		\
+		if (sing->args_it < sing->argc) {								\
+			C(sing->argv[sing->args_it++], "%" #F, &val);				\
+		}																\
+																		\
+		generic_type out;												\
+		set_gt_##T (&out, name, val);									\
+		push_generic_type_list (sing->args_list, &out);					\
+																		\
+		return val;														\
+	}																	\
+																		\
 	T create_reportable_##T (const char name[], T val)					\
 	{																	\
 		generic_type out;												\
