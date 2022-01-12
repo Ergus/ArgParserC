@@ -69,7 +69,9 @@ int main(int argc, char *argv[])
 	timer t2 = create_timer("timer_2"); // New timer to trigger realloc
 	sleep(1);
 	stop_timer(&t2);
-	assert(getNS_timer(&t2) - 1E9 < 1E6);
+
+	const double diff_time = getNS_timer(&t2);
+	assert(getNS_timer(&t2) > 1E9);
 
 	assert(getNS_timer(&t1) == 0);
 
