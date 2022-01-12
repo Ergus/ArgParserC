@@ -34,6 +34,10 @@ int main(int argc, char *argv[])
 	char *v_char_1 = create_cl_char_p ("vchar_1");
 	double v_double_1 = create_cl_double ("vdouble_1");
 
+	assert(v_int_1 == atoi(argv[1]));
+	assert(strcmp(v_char_1, argv[2]) == 0);
+	assert(v_double_1 == atof(argv[3]));
+
 	int o_int_1 = create_optional_cl_int ("oint_1", -1);
 	double o_double_1 = create_optional_cl_double ("odouble_1", 0.5);
 	char *o_char_1 = create_optional_cl_char_p ("ochar_p_1", NULL);
@@ -50,7 +54,7 @@ int main(int argc, char *argv[])
 	create_reportable_char_p("r_char_2", "hello world");
 
 	timer t2 = create_timer("timer_2"); // New timer to trigger realloc
-	sleep (1);
+	sleep(1);
 	stop_timer(&t2);
 
 	report_args();
