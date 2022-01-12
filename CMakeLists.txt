@@ -19,6 +19,10 @@ project(ArgParserC LANGUAGES C)
 
 add_library(argparser argparser.c timer.c)
 
+if (WIN32)
+  target_compile_definitions(argparser PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
 

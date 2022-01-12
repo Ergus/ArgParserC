@@ -32,7 +32,7 @@ global_args_t *sing = NULL;
 	{																	\
 		if (in->count + 1 >= in->max_size) {							\
 			in->max_size *= 2;											\
-			dbprintf ("Reallocating array to %d\n", in->max_size);		\
+			dbprintf ("Reallocating array to %zu\n", in->max_size);		\
 																		\
 			T *tmp = (T *) malloc(2 * in->max_size * sizeof(T));		\
 			for (size_t i = 0; i < in->max_size; ++i){					\

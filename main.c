@@ -19,7 +19,12 @@
 
 #include "argparser.h"
 
+#ifdef _MSC_VER
+#include <Windows.h>
+#define sleep(X) Sleep(X)
+#else
 #include <unistd.h>
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -45,7 +50,7 @@ int main(int argc, char *argv[])
 	create_reportable_char_p("r_char_2", "hello world");
 
 	timer t2 = create_timer("timer_2"); // New timer to trigger realloc
-	usleep (1000);
+	sleep (1);
 	stop_timer(&t2);
 
 	report_args();

@@ -20,6 +20,24 @@
 #include <errno.h>
 #include <assert.h>
 
+#ifdef _MSC_VER
+#include <windows.h>
+#include <sysinfoapi.h>
+
+#define CLOCK_MONOTONIC 1
+
+static
+int clock_gettime(int _ignore, struct timespec *spec)       //C-file part
+{
+	__int64 wintime;
+	GetSystemTimeAsFileTime((FILETIME*)&wintime);
+	wintime      -=116444736000000000i64;           //1jan1601 to 1jan1970
+	spec->tv_sec  =wintime / 10000000i64;           //seconds
+	spec->tv_nsec =wintime % 10000000i64 *100;      //nano-seconds
+	return 0;
+}
+#endif // _MSC_VER
+
 // Timer
 static
 void getTime(struct timespec *ts)
