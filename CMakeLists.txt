@@ -26,9 +26,9 @@ endif()
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
 
-enable_testing()
-
 if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
+  enable_testing()
+
   add_test(NAME test_1 COMMAND test_main 1)
   set_tests_properties(test_1 PROPERTIES
     PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set vchar_1")
