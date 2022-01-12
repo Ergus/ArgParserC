@@ -66,17 +66,14 @@ typedef char * char_p;
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
 
-#define PRINT_STRING(buff, MAXSIZE, FORMAT, input)		\
-	snprintf(buff, MAXSIZE, "\"" FORMAT "\"", input)
-
 /* The types must have 3 arguments:
    1) type
    2) format for printf without %, should not be repeated
    3) function to convert FROM char)
-   4) function to convert TO char (default printf) */
+   4) Format to convert TO char (default printf) */
 #define TYPES										\
 	F(int, d, sscanf, "%d")							\
-	F(double, lg, sscanf, "%lf")					\
+	F(double, lg, sscanf, "%lg")					\
 	F(size_t, zu, sscanf, "%zu")					\
 	F(char_p, s, COPYPTR, "\"%s\"")
 
