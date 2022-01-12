@@ -39,23 +39,39 @@ int main(int argc, char *argv[])
 	assert(v_double_1 == atof(argv[3]));
 
 	int o_int_1 = create_optional_cl_int ("oint_1", -1);
+	assert(o_int_1 == ((argc > 4 ? atoi(argv[4]) : -1)));
+
 	double o_double_1 = create_optional_cl_double ("odouble_1", 0.5);
+	assert(o_double_1 == ((argc > 5 ? atof(argv[5]) : 0.5)));
+
 	char *o_char_1 = create_optional_cl_char_p ("ochar_p_1", NULL);
+	assert((argc > 6 ? strcmp(o_char_1, argv[6]) == 0 : o_char_1 == NULL));
+
 	char *o_char_2 = create_optional_cl_char_p ("ochar_p_2", "");
+	assert(strcmp(o_char_2, ((argc > 7 ? argv[7] : ""))) == 0);
+
 	char *o_char_3 = create_optional_cl_char_p ("ochar_p_3", "opt1 opt2");
+	assert(strcmp(o_char_3, ((argc > 8 ? argv[8] : "opt1 opt2"))) == 0);
 
-	timer t = create_timer("timer_1");
-	create_reportable_int("r_int_1", argc);
+	timer t1 = create_timer("timer_1");
+	int r_int_1 = create_reportable_int("r_int_1", argc);
+	assert(r_int_1 == argc);
 
-	printf ("Second timer to trigger\n");
-	create_reportable_double("r_double_1", v_double_1 / o_double_1);
+	double r_double_1 = create_reportable_double("r_double_1", v_double_1 / o_double_1);
+	assert(r_double_1 == v_double_1 / o_double_1);
 
-	create_reportable_char_p("r_char_1", "hello");
-	create_reportable_char_p("r_char_2", "hello world");
+	char * r_char_1 = create_reportable_char_p("r_char_1", "hello");
+	assert(strcmp(r_char_1, "hello") == 0);
+
+	char * r_char_2 = create_reportable_char_p("r_char_2", "hello world");
+	assert(strcmp(r_char_2, "hello world") == 0);
 
 	timer t2 = create_timer("timer_2"); // New timer to trigger realloc
 	sleep(1);
 	stop_timer(&t2);
+	assert(getNS_timer(&t2) - 1E9 < 1E6);
+
+	assert(getNS_timer(&t1) == 0);
 
 	report_args();
 
