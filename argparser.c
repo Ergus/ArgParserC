@@ -65,6 +65,8 @@ global_args_t *sing = NULL;
 																		\
 	T *begin_##T##_list (const T##_list *in) {return in->list;};		\
 	T *end_##T##_list (const T##_list *in) {return &in->list[in->count];}; \
+	size_t size_##T##_list (T##_list *in) {return in->count;};				\
+	size_t max_size_##T##_list (T##_list *in) {return in->max_size;};		\
 																		\
 	T *get_named_##T##_list (T##_list *in, const char name[])			\
 	{																	\

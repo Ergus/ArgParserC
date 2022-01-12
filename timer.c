@@ -87,7 +87,7 @@ timer create_timer(const char *name)
 	strncpy (init.name, name, MAXNAME);
 	ttimer *pushed = push_ttimer_list (sing->ttimers, &init);
 	out.tidx = pushed - begin_ttimer_list(sing->ttimers);
-	assert(out.tidx >= 0);
+	assert(out.tidx < size_ttimer_list(sing->ttimers));
 
 	start_timer(&out);
 
@@ -105,7 +105,7 @@ void stop_timer(timer *out)
 	struct timespec *accumulated = &reportable->_accumulated;
 
 	if (endTime->tv_nsec < startTime->tv_nsec) {
-		accumulated->tv_nsec += 1E9L + endTime->tv_nsec - startTime->tv_nsec;
+		accumulated->tv_nsec += 1000000000L + endTime->tv_nsec - startTime->tv_nsec;
 		accumulated->tv_sec += (endTime->tv_sec - 1 - startTime->tv_sec);
 	} else {
 		accumulated->tv_nsec += (endTime->tv_nsec - startTime->tv_nsec);

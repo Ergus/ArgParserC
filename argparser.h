@@ -51,7 +51,7 @@ typedef struct ttimer {
 } ttimer;
 
 typedef struct timer {
-	int tidx;
+	size_t tidx;
 } timer;
 
 timer create_timer(const char *name);
@@ -100,14 +100,14 @@ typedef struct generic_type {
 #define list_for(T)														\
 	typedef struct T##_list {											\
 		T *list;														\
-		int count;														\
-		int max_size;													\
+		size_t count;													\
+		size_t max_size;												\
 	} T##_list;															\
 																		\
 	void init_##T##_list (T##_list *in, size_t max);					\
 	T *push_##T##_list (T##_list *in, T *val);							\
-	inline int size_##T##_list (T##_list *in) {return in->count;};		\
-	inline int max_size_##T##_list (T##_list *in) {return in->max_size;}; \
+	size_t size_##T##_list (T##_list *in);									\
+	size_t max_size_##T##_list (T##_list *in) ;							\
 	void free_##T##_list (T##_list *in);								\
 	T *get_##T##_list (T##_list *in, size_t idx);						\
 	T *begin_##T##_list (const T##_list *in);							\
