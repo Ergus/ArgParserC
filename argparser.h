@@ -39,7 +39,7 @@ extern "C" {
 #endif //dbprintf
 
 #define MAXLIST 16
-#define MAXNAME 128
+#define MAXNAME 64
 #define MAXSTRSIZE 256
 
 // timer
