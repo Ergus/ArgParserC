@@ -15,7 +15,7 @@
 
 cmake_minimum_required(VERSION 2.8.12)
 
-project(ArgParserC)
+project(ArgParserC LANGUAGES C)
 
 add_library(argparser argparser.c timer.c)
 
