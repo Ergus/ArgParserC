@@ -73,10 +73,11 @@ The functionalities are:
 1. Parse command line arguments in order and add them to the Final
    report and get the value converted to `TYPE`.
 
-   * `const TYPE create_cl_TYPE (const char *name)` : Read a positional
-     command line argument and convert it to *TYPE*. If no enough
-     command line arguments are provided then the function fails and
-     aborts the program.
+   * `const TYPE create_cl_TYPE (const char *name)` : Read a
+     positional command line argument and convert it to *TYPE*. If no
+     enough command line arguments are provided then the function
+     fails and aborts the program. When TYPE is `string` then the
+     function returns `char *`.
 
    * `const TYPE create_optional_cl_TYPE (const char *name, TYPE default)` :
      Read a positional command line argument and convert it to *TYPE*,
