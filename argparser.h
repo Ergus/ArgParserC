@@ -61,9 +61,6 @@ void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);
 
-// generic_type
-typedef char * char_p;
-
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
 
 /* The types must have 3 arguments:
@@ -72,16 +69,16 @@ typedef char * char_p;
    3) function to convert FROM char)
    4) Format to convert TO char (default printf) */
 #define TYPES										\
-	F(int, d, sscanf, "%d")							\
-	F(double, lg, sscanf, "%lg")					\
-	F(size_t, zu, sscanf, "%zu")					\
-	F(char_p, s, COPYPTR, "\"%s\"")
+	F(int, int, d, sscanf, "%d")						\
+	F(double, double, lg, sscanf, "%lg")				\
+	F(size_t, size_t, zu, sscanf, "%zu")				\
+	F(string, char *, s, COPYPTR, "\"%s\"")
 
 // Generic type (this is the key of everything)
 typedef struct generic_type {
 	// Enum with the defined types
 	enum type_t {
-		#define F(T,...) T##_type_id,
+		#define F(N,T,...) N##_type_id,
 		TYPES
 		#undef F
 		total_type_ids
@@ -90,7 +87,7 @@ typedef struct generic_type {
 	char name[MAXNAME];
 	char _buffer[MAXSTRSIZE];
 	union {
-		#define F(T,F,...) T F;
+		#define F(N,T,F,...) T F;
 		TYPES
 		#undef F
 	} value;
@@ -139,11 +136,11 @@ typedef struct global_args_t {
 extern global_args_t *sing;
 
 // Expandable macros to add arguments to parse.
-#define F(T,...)														\
-	void set_gt_##T (generic_type *out, const char name[], const T val); \
-	T create_cl_##T (const char name[]);								\
-	T create_optional_cl_##T (const char name[], const T def);			\
-	T create_reportable_##T (const char name[], const T value);
+#define F(N, T,...)														\
+	void set_gt_##N (generic_type *out, const char name[], const T val); \
+	const T create_cl_##N (const char name[]);								\
+	const T create_optional_cl_##N (const char name[], const T def);			\
+	const T create_reportable_##N (const char name[], const T value);
 	TYPES
 #undef F
 

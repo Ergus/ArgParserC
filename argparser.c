@@ -82,15 +82,15 @@ list_for(ttimer);
 
 
 // The rest
-#define F(T,F,C,P)														\
-	void set_gt_##T (generic_type *out, const char name[], const T val)	\
+#define F(N,T,F,C,P)													\
+	void set_gt_##N (generic_type *out, const char name[], const T val)	\
 	{																	\
-		out->type = T##_type_id ;										\
+		out->type = N##_type_id ;										\
 		strncpy (out->name, name, MAXNAME);								\
-		out->value.F = val;												\
+		out->value.F = (T) val;		/* Cast to remove warning */		\
 	}																	\
 																		\
-	T create_cl_##T (const char name[])									\
+	const T create_cl_##N (const char name[])							\
 	{																	\
 		if (sing->args_it >= sing->argc) {								\
 			dbprintf ("Error: no enough CL arguments to set %s (arg: %d)\n", \
@@ -102,31 +102,31 @@ list_for(ttimer);
 		C(sing->argv[sing->args_it++], "%" #F, &val);					\
 																		\
 		generic_type out;												\
-		set_gt_##T (&out, name, val);									\
+		set_gt_##N (&out, name, val);									\
 		push_generic_type_list (sing->args_list, &out);					\
 																		\
 		return val;														\
 	}																	\
 																		\
-	T create_optional_cl_##T (const char name[], const T def)			\
+	const T create_optional_cl_##N (const char name[], const T def)		\
 	{																	\
-		T val = def;													\
+		const T val = def;												\
 																		\
 		if (sing->args_it < sing->argc) {								\
 			C(sing->argv[sing->args_it++], "%" #F, &val);				\
 		}																\
 																		\
 		generic_type out;												\
-		set_gt_##T (&out, name, val);									\
+		set_gt_##N (&out, name, val);									\
 		push_generic_type_list (sing->args_list, &out);					\
 																		\
 		return val;														\
 	}																	\
 																		\
-	T create_reportable_##T (const char name[], const T val)			\
+	const T create_reportable_##N (const char name[], const T val)		\
 	{																	\
 		generic_type out;												\
-		set_gt_##T(&out, name, val);									\
+		set_gt_##N (&out, name, val);									\
 		return push_generic_type_list (sing->reportables, &out)->value.F; \
 	}
 TYPES
@@ -137,8 +137,8 @@ int snprintf_generic_type(char out[], size_t maxsize,const generic_type *in)
 {
 	assert(in->type < total_type_ids);
 	switch (in->type) {
-#define F(T,F,C,P)												\
-		case ( T##_type_id ):									\
+#define F(N,T,F,C,P)											\
+		case ( N##_type_id ):									\
 			return snprintf(out, maxsize, P, in->value.F);
 		TYPES
 #undef F
@@ -153,7 +153,7 @@ void copy_generic_type(generic_type *out, const generic_type *in)
 	out->type = in->type;
 	strcpy(out->name, in->name);
 
-	if (out->type == char_p_type_id) {
+	if (out->type == string_type_id) {
 		out->value.s = out->_buffer;           // point to self internal buffer
 		snprintf(out->value.s, MAXSTRSIZE, "%s", in->value.s); // copy text then
 	} else {
@@ -184,7 +184,7 @@ void init_args(int argc, char **argv)
 	init_generic_type_list (sing->reportables, MAXLIST);
 	init_ttimer_list (sing->ttimers, MAXLIST);
 
-	create_cl_char_p ("Executable");
+	create_cl_string ("Executable");
 }
 
 void free_args()
@@ -202,8 +202,8 @@ void free_args()
 static
 void report_args_base(const char start[], const char sep[],
                       const char formatpair[], // sep, key: value
-                      const char close[])
-{
+                      const char close[]
+) {
 	int counter = 0;
 	char buff[MAXSTRSIZE];
 

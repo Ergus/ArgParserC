@@ -26,38 +26,45 @@
 #include <unistd.h>
 #endif
 
+const char * global_string = "Value for reportable in global variable";
+
+const char * get_global_string()
+{
+	return global_string;
+}
+
 int main(int argc, char *argv[])
 {
 	init_args (argc, argv);
 
-	int v_int_1 = create_cl_int ("vint_1");
-	char *v_char_1 = create_cl_char_p ("vchar_1");
-	double v_double_1 = create_cl_double ("vdouble_1");
+	int v_int_1 = create_cl_int ("v_int_1");
+	const char *v_string_1 = create_cl_string ("v_string_1");
+	double v_double_1 = create_cl_double ("v_double_1");
 
-	printf("# Read mandatory args: %d %s %lf\n", v_int_1, v_char_1, v_double_1);
+	printf("# Read mandatory args: %d %s %lf\n", v_int_1, v_string_1, v_double_1);
 	assert(v_int_1 == atoi(argv[1]));
-	assert(strcmp(v_char_1, argv[2]) == 0);
+	assert(strcmp(v_string_1, argv[2]) == 0);
 	assert(v_double_1 == atof(argv[3]));
 
-	int o_int_1 = create_optional_cl_int ("oint_1", -1);
+	int o_int_1 = create_optional_cl_int ("o_int_1", -1);
 	printf("# Read: o_int_1 %d\n", o_int_1);
 	assert(o_int_1 == ((argc > 4 ? atoi(argv[4]) : -1)));
 
-	double o_double_1 = create_optional_cl_double ("odouble_1", 0.5);
+	double o_double_1 = create_optional_cl_double ("o_double_1", 0.5);
 	printf("# Read: o_double_1 %lf\n", o_double_1);
 	assert(o_double_1 == ((argc > 5 ? atof(argv[5]) : 0.5)));
 
-	char *o_char_1 = create_optional_cl_char_p ("ochar_p_1", NULL);
-	printf("# Read: o_char_1 %s\n", o_char_1);
-	assert((argc > 6 ? strcmp(o_char_1, argv[6]) == 0 : o_char_1 == NULL));
+	const char *o_string_1 = create_optional_cl_string ("o_string_1", NULL);
+	printf("# Read: o_string_1 %s\n", o_string_1);
+	assert((argc > 6 ? strcmp(o_string_1, argv[6]) == 0 : o_string_1 == NULL));
 
-	char *o_char_2 = create_optional_cl_char_p ("ochar_p_2", "");
-	printf("# Read: o_char_2 %s\n", o_char_2);
-	assert(strcmp(o_char_2, ((argc > 7 ? argv[7] : ""))) == 0);
+	const char *o_string_2 = create_optional_cl_string ("o_string_2", "");
+	printf("# Read: o_string_2 %s\n", o_string_2);
+	assert(strcmp(o_string_2, ((argc > 7 ? argv[7] : ""))) == 0);
 
-	char *o_char_3 = create_optional_cl_char_p ("ochar_p_3", "opt1 opt2");
-	printf("# Read: o_char_3 %s\n", o_char_3);
-	assert(strcmp(o_char_3, ((argc > 8 ? argv[8] : "opt1 opt2"))) == 0);
+	const char *o_string_3 = create_optional_cl_string ("o_string_3", "opt1 opt2");
+	printf("# Read: o_string_3 %s\n", o_string_3);
+	assert(strcmp(o_string_3, ((argc > 8 ? argv[8] : "opt1 opt2"))) == 0);
 
 	timer t1 = create_timer("timer_1");
 	int r_int_1 = create_reportable_int("r_int_1", argc);
@@ -68,13 +75,22 @@ int main(int argc, char *argv[])
 	printf("# Report: r_double_1 %lf\n", r_double_1);
 	assert(r_double_1 == v_double_1 / o_double_1);
 
-	char * r_char_1 = create_reportable_char_p("r_char_1", "hello");
-	printf("# Report: r_char_1 %s\n", r_char_1);
-	assert(strcmp(r_char_1, "hello") == 0);
+	const char * r_string_1 = create_reportable_string("r_string_1", "hello");
+	printf("# Report: r_string_1 %s\n", r_string_1);
+	assert(strcmp(r_string_1, "hello") == 0);
 
-	char * r_char_2 = create_reportable_char_p("r_char_2", "hello world");
-	printf("# Report: r_char_2 %s\n", r_char_2);
-	assert(strcmp(r_char_2, "hello world") == 0);
+	const char * r_string_2 = create_reportable_string("r_string_2", "hello world");
+	printf("# Report: r_string_2 %s\n", r_string_2);
+	assert(strcmp(r_string_2, "hello world") == 0);
+
+
+	const char * r_string_3 = create_reportable_string("r_string_3", global_string);
+	printf("# Report: r_string_3 %s\n", r_string_3);
+	assert(strcmp(r_string_3, global_string) == 0);
+
+	const char * r_string_4 = create_reportable_string("r_string_4", get_global_string());
+	printf("# Report: r_string_4 %s\n", r_string_4);
+	assert(strcmp(r_string_4, global_string) == 0);
 
 	timer t2 = create_timer("timer_2"); // New timer to trigger realloc
 	printf("# Start sleep\n");

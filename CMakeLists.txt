@@ -31,11 +31,11 @@ if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
 
   add_test(NAME test_1 COMMAND test_main 1)
   set_tests_properties(test_1 PROPERTIES
-    PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set vchar_1")
+    PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set v_string_1")
 
   add_test(NAME test_2 COMMAND test_main 1 2)
   set_tests_properties(test_2 PROPERTIES
-    PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set vdouble_1")
+    PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set v_double_1")
 
   add_test(NAME test_3 COMMAND test_main 1 name1 2.6)
   add_test(NAME test_4 COMMAND test_main 2.5 name1 2.5 5 3 name2)
