@@ -20,7 +20,7 @@
 
 This is a very simple code that emulates metaprogramming with C macros
 to parse arguments from command line and store them in an array and
-report them at the end with the right format for printf.
+report them at the end with the right format for `printf`.
 
 Of course there are several limitations because metaprogramming is
 not a C feature. But it is a good example of how to exploit macros
@@ -73,12 +73,12 @@ The functionalities are:
 1. Parse command line arguments in order and add them to the Final
    report and get the value converted to `TYPE`.
 
-   * `TYPE create_cl_TYPE (const char *name)` : Read a positional
-     command line argument and convert it to *TYPE*. if no enough
+   * `const TYPE create_cl_TYPE (const char *name)` : Read a positional
+     command line argument and convert it to *TYPE*. If no enough
      command line arguments are provided then the function fails and
      aborts the program.
 
-   * `TYPE create_optional_cl_TYPE (const char *name, TYPE default)` :
+   * `const TYPE create_optional_cl_TYPE (const char *name, TYPE default)` :
      Read a positional command line argument and convert it to *TYPE*,
      if no enough command line arguments are provided then the
      function created the value with the `default` value.
@@ -86,7 +86,7 @@ The functionalities are:
 
 2. Add specific values to the final report.
 
-	* `TYPE create_reportable_TYPE (const char *name, TYPE value)` :
+	* `const TYPE create_reportable_TYPE (const char *name, TYPE value)` :
       This creates a `reportable` value. This function add a variable
       with `name` and default value `val`. The report values are
       reported AFTER the command line arguments.
@@ -113,13 +113,13 @@ The functionalities are:
 ### TYPES
 
 For now only 4 different types are supported: `int`, `double`,
-`size_t` and `char_p`. The last one is just a `typedef` for `char *`
-needed to provide a nice name for the macro. Extra types can be added
-very easily.
+`size_t` and `string`. The last one is just a name for functions
+returning `char *` needed to provide a nice name for the macro. Extra
+types can be added very easily.
 
 To see how to use all of this there is a *main.c* file used to
 generate the tests where most of the API functions are used.
 
-The `char_p` stores strings in an internal buffer. Currently the
+The `string` stores strings in an internal buffer. Currently the
 buffer size is limited to 256 chars (including the '\0') and in case
 of overflow the string is truncated quietly.
