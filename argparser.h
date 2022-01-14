@@ -106,7 +106,7 @@ typedef struct generic_type {
 																		\
 	void init_##T##_list (T##_list *in, size_t max);					\
 	T *push_##T##_list (T##_list *in, T *val);							\
-	size_t size_##T##_list (T##_list *in);									\
+	size_t size_##T##_list (T##_list *in);								\
 	size_t max_size_##T##_list (T##_list *in) ;							\
 	void free_##T##_list (T##_list *in);								\
 	T *get_##T##_list (T##_list *in, size_t idx);						\
@@ -139,11 +139,11 @@ typedef struct global_args_t {
 extern global_args_t *sing;
 
 // Expandable macros to add arguments to parse.
-#define F(T,...)													\
-	void set_gt_##T (generic_type *out, const char name[], T val);	\
-	T create_cl_##T (const char name[]);							\
-	T create_optional_cl_##T (const char name[], T def);			\
-	T create_reportable_##T (const char name[], T value);
+#define F(T,...)														\
+	void set_gt_##T (generic_type *out, const char name[], const T val); \
+	T create_cl_##T (const char name[]);								\
+	T create_optional_cl_##T (const char name[], const T def);			\
+	T create_reportable_##T (const char name[], const T value);
 	TYPES
 #undef F
 

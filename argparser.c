@@ -83,7 +83,7 @@ list_for(ttimer);
 
 // The rest
 #define F(T,F,C,P)														\
-	void set_gt_##T (generic_type *out, const char name[], T val)		\
+	void set_gt_##T (generic_type *out, const char name[], const T val)	\
 	{																	\
 		out->type = T##_type_id ;										\
 		strncpy (out->name, name, MAXNAME);								\
@@ -108,7 +108,7 @@ list_for(ttimer);
 		return val;														\
 	}																	\
 																		\
-	T create_optional_cl_##T (const char name[], T def)					\
+	T create_optional_cl_##T (const char name[], const T def)			\
 	{																	\
 		T val = def;													\
 																		\
@@ -123,7 +123,7 @@ list_for(ttimer);
 		return val;														\
 	}																	\
 																		\
-	T create_reportable_##T (const char name[], T val)					\
+	T create_reportable_##T (const char name[], const T val)			\
 	{																	\
 		generic_type out;												\
 		set_gt_##T(&out, name, val);									\
