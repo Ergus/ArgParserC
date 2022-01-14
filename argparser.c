@@ -110,7 +110,7 @@ list_for(ttimer);
 																		\
 	const T create_optional_cl_##N (const char name[], const T def)		\
 	{																	\
-		const T val = def;												\
+		T val = (T) def;													\
 																		\
 		if (sing->args_it < sing->argc) {								\
 			C(sing->argv[sing->args_it++], "%" #F, &val);				\
