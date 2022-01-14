@@ -9,7 +9,7 @@ env:
 
 jobs:
   build:
-    name: ${{ matrix.config.name }}
+    name: ${{ matrix.config.os }} ${{ matrix.config.cc }}
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 5
     strategy:
@@ -17,17 +17,14 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu Latest GCC",
             os: ubuntu-latest,
             cc: "gcc"
           }
         - {
-            name: "macOS Latest Clang",
             os: macos-latest,
             cc: "clang"
           }
         - {
-            name: "windows Latest MSVC",
             os: windows-latest,
             cc: "cl"
           }
