@@ -100,11 +100,16 @@ int main(int argc, char *argv[])
 
 	const double diff_time1 = getNS_timer(&t1);
 	printf("# Timer: T1 %lf\n", diff_time1);
-	assert(diff_time1 == 0);
+	assert(diff_time1 == 0.);
 
 	const double diff_time2 = getNS_timer(&t2);
 	printf("# Times: T2 %lf\n", diff_time2);
 	assert(diff_time2 >= 1E9);
+
+	reset_timer(&t2);
+	const double diff_time_reset = getNS_timer(&t2);
+	printf("# Times: T2 (reset) %lf\n", diff_time_reset);
+	assert(diff_time_reset == 0.);
 
 	printf("# Reporting args\n");
 	report_args();
