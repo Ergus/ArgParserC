@@ -65,8 +65,8 @@ global_args_t *sing = NULL;
 																		\
 	T *begin_##T##_list (const T##_list *in) {return in->list;};		\
 	T *end_##T##_list (const T##_list *in) {return &in->list[in->count];}; \
-	size_t size_##T##_list (T##_list *in) {return in->count;};				\
-	size_t max_size_##T##_list (T##_list *in) {return in->max_size;};		\
+	size_t size_##T##_list (T##_list *in) {return in->count;};			\
+	size_t max_size_##T##_list (T##_list *in) {return in->max_size;};	\
 																		\
 	T *get_named_##T##_list (T##_list *in, const char name[])			\
 	{																	\
@@ -110,7 +110,7 @@ list_for(ttimer);
 																		\
 	const T create_optional_cl_##N (const char name[], const T def)		\
 	{																	\
-		T val = (T) def;													\
+		T val = (T) def;												\
 																		\
 		if (sing->args_it < sing->argc) {								\
 			C(sing->argv[sing->args_it++], "%" #F, &val);				\
