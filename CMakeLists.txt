@@ -17,17 +17,22 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(ArgParserC LANGUAGES C)
 
-if ((CMAKE_C_COMPILER_ID STREQUAL "GNU") AND (NOT CMAKE_BUILD_TYPE MATCHES "^Rel"))
+if ((NOT CMAKE_BUILD_TYPE MATCHES "^Rel") AND (CMAKE_C_COMPILER_ID STREQUAL "GNU"))
+  option(WITH_COVERAGE "Generate coverage files:" false)
+endif ()
+
+if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+  add_definitions(argparser PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
+if (WITH_COVERAGE)
   add_compile_options(--coverage)
   add_link_options(--coverage)
   set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-endif ()
-
-add_library(argparser STATIC argparser.c timer.c)
-
-if (WIN32)
-  target_compile_definitions(argparser PUBLIC _CRT_SECURE_NO_WARNINGS)
 endif()
+
+# Important starts here.
+add_library(argparser STATIC argparser.c timer.c)
 
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
