@@ -17,7 +17,16 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(ArgParserC LANGUAGES C)
 
-add_library(argparser argparser.c timer.c)
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  add_compile_options(--coverage)
+  add_link_options(--coverage)
+  set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
+  find_program (COVERAGE_COMMAND gcov)
+  message("HEE: ${COVERAGE_COMMAND}")
+endif ()
+
+
+add_library(argparser STATIC argparser.c timer.c)
 
 if (WIN32)
   target_compile_definitions(argparser PUBLIC _CRT_SECURE_NO_WARNINGS)
@@ -27,6 +36,7 @@ add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
 
 if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
+
   enable_testing()
 
   add_test(NAME test_1 COMMAND test_main 1)

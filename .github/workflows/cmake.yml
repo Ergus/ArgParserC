@@ -41,3 +41,41 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}/build
         run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+
+  finish:
+    name: Coverage_ubuntu-latest_gcc
+    runs-on: ubuntu-latest
+    env:
+      cc: gcc
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Run Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
+
+      - name: Copy coverage
+        working-directory: ${{github.workspace}}/build
+        run: cp $(find . -regex '.*gc\(da\|no\)' -printf "%p ") .
+
+      - name: Generate Coverage
+        run: |
+          sudo apt-get -y install lcov
+          lcov -c --directory ${{github.workspace}}/build --output-file ${{github.workspace}}/build/coverage.info
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ${{github.workspace}}/build/coverage.info
