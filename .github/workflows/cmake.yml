@@ -11,6 +11,8 @@ jobs:
   build:
     name: ${{ matrix.config.os }} ${{ matrix.config.cc }}
     runs-on: ${{ matrix.config.os }}
+    env:
+      CC: ${{ matrix.config.cc }}
     timeout-minutes: 5
     strategy:
       fail-fast: false
@@ -19,6 +21,10 @@ jobs:
         - {
             os: ubuntu-latest,
             cc: "gcc"
+          }
+        - {
+            os: ubuntu-latest,
+            cc: "clang"
           }
         - {
             os: macos-latest,
