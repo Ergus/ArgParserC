@@ -17,14 +17,11 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(ArgParserC LANGUAGES C)
 
-if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+if ((CMAKE_C_COMPILER_ID STREQUAL "GNU") AND (NOT CMAKE_BUILD_TYPE MATCHES "^Rel"))
   add_compile_options(--coverage)
   add_link_options(--coverage)
   set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
-  find_program (COVERAGE_COMMAND gcov)
-  message("HEE: ${COVERAGE_COMMAND}")
 endif ()
-
 
 add_library(argparser STATIC argparser.c timer.c)
 
