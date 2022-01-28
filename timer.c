@@ -75,6 +75,30 @@ void copy_ttimer(ttimer *out, const ttimer *in)
 	*out = *in;
 }
 
+static
+void start_ttimer(ttimer *out)
+{
+	getTime(&out->_startTime);
+}
+
+static
+void stop_ttimer(ttimer *out)
+{
+	getTime(&out->_endTime);
+
+	const struct timespec *startTime = &out->_startTime;
+	const struct timespec *endTime = &out->_endTime;
+	struct timespec *accumulated = &out->_accumulated;
+
+	if (endTime->tv_nsec < startTime->tv_nsec) {
+		accumulated->tv_nsec += 1000000000L + endTime->tv_nsec - startTime->tv_nsec;
+		accumulated->tv_sec += (endTime->tv_sec - 1 - startTime->tv_sec);
+	} else {
+		accumulated->tv_nsec += (endTime->tv_nsec - startTime->tv_nsec);
+		accumulated->tv_sec += (endTime->tv_sec - startTime->tv_sec);
+	}
+}
+
 // timer functions (public)
 double getNS_timer(const timer *in)
 {
@@ -91,8 +115,7 @@ void reset_timer(timer *out)
 void start_timer(timer *out)
 {
 	ttimer *reportable = get_ttimer_list(sing->ttimers, out->tidx);
-
-	getTime(&reportable->_startTime);
+	start_ttimer(reportable);
 }
 
 // Function to create timer.
@@ -115,19 +138,6 @@ timer create_timer(const char *name)
 void stop_timer(timer *out)
 {
 	ttimer *reportable = get_ttimer_list(sing->ttimers, out->tidx);
-
-	getTime(&reportable->_endTime);
-
-	const struct timespec *startTime = &reportable->_startTime;
-	const struct timespec *endTime = &reportable->_endTime;
-	struct timespec *accumulated = &reportable->_accumulated;
-
-	if (endTime->tv_nsec < startTime->tv_nsec) {
-		accumulated->tv_nsec += 1000000000L + endTime->tv_nsec - startTime->tv_nsec;
-		accumulated->tv_sec += (endTime->tv_sec - 1 - startTime->tv_sec);
-	} else {
-		accumulated->tv_nsec += (endTime->tv_nsec - startTime->tv_nsec);
-		accumulated->tv_sec += (endTime->tv_sec - startTime->tv_sec);
-	}
+	stop_ttimer(reportable);
 }
 
