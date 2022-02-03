@@ -124,3 +124,54 @@ generate the tests where most of the API functions are used.
 The `string` stores strings in an internal buffer. Currently the
 buffer size is limited to 256 chars (including the '\0') and in case
 of overflow the string is truncated quietly.
+
+# Minimal use example
+
+This is a MWE that shows how to use the library. It requires 3
+mandatory command line arguments and 3 other optional ones.
+
+So this program may be called like:
+
+`./example 1 Hello1 3.14`
+
+`./example 2 Hello2 2.71 5`
+
+`./example 3 Hello3 0,22 6 World`
+
+A call with less than 3 arguments or with wrong input (not
+convertibles) will emit an error.
+
+```C
+#include "argparser.h"
+
+int main(int argc, char *argv[])
+{
+	// Initialize
+	init_args (argc, argv);
+
+	// Mandatory CL arguments
+	int m_int = create_cl_int ("m_int");
+	const char *m_string = create_cl_string ("m_string");
+	double m_double = create_cl_double ("m_double");
+
+	// Optional CL arguments
+	int o_int = create_optional_cl_int ("o_int", -1);
+	double o_double = create_optional_cl_double ("o_double", 0.5);
+	const char *o_string = create_optional_cl_string ("o_string", "Hello");
+
+	// Declare a timer
+	timer t1 = create_timer("timer_1");
+	sleep(1);
+	stop_timer(&t1);
+
+	// Report the arguments
+	report_args();
+	report_args_json();
+
+	// Release memory (finalize the library)
+	free_args ();
+	return 0;
+}
+```
+
+A more complete use example is in the `main.c`
