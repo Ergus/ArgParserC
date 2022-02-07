@@ -186,13 +186,12 @@ void init_args(int argc, char **argv)
 
 	create_cl_string ("Executable");
 
+	sing->format = _format_raw;
 	// if first argument is "-json" the report will be printed in json format
 	// this could be improved latter but I want to keep it simple.
 	if ((sing->argc > 1) && (strcmp(sing->argv[1], "-json") == 0)) {
-		sing->format = json_format;
+		sing->format = _format_json;
 		sing->args_it++;
-	} else {
-		sing->format = raw_format;
 	}
 }
 
@@ -218,19 +217,21 @@ int get_rest_args(char ***rest)
 	return sing->argc - sing->args_it;
 }
 
-// they should be: start, sep, pair_format, close.
-static const char *json_delims[] = {"{", ",", "%s\"%s\":%s","}", "[", ",", "]"};
-static const char *raw_delims[] = {"", "\n", "%s%s: %s", "\n", "", " ", ""};
+// these are the separator for the print function: start, sep, pair_format, close, lstart, lsep, lend.
+static const char *delims[_nformats][7] = {
+	{"", "\n",    "%s%s: %s", "\n",  "", " ",  ""},
+	{"{", ",", "%s\"%s\":%s",  "}", "[", ",", "]"}
+};
 
 static
-void report_args_base(const char *delim[]) {
+void report_args_base(FILE *out, const char *delim[7]) {
 	int counter = 0;
 	char buff[MAXSTRSIZE];
 
 #define F(T, N)															\
 	for (const T *it = begin_##T##_list(sing->N); it != end_##T##_list(sing->N); ++it) { \
 		snprintf_##T(buff, MAXSTRSIZE, it);								\
-		printf(delim[2], delim[counter++ > 0], it->name, buff);	\
+		fprintf(out, delim[2], delim[counter++ > 0], it->name, buff);	\
 	}
 	GLOBALS
 #undef F
@@ -240,18 +241,15 @@ void report_args_base(const char *delim[]) {
 	if (get_rest_args(&rest) > 0) {
 		printf(delim[2], delim[counter++ > 0], "REST", delim[4]);
 		for (char **it = rest; *it != NULL; ++it) {
-			printf("%s\"%s\"", (it != rest ? delim[5] : ""), *it);
+			fprintf(out, "%s\"%s\"", (it != rest ? delim[5] : ""), *it);
 		}
-		printf("%s", delim[6]);
+		fprintf(out, "%s", delim[6]);
 	}
 
-	printf("%s", delim[3]);
+	fprintf(out, "%s", delim[3]);
 }
 
 void report_args()
 {
-	if (sing->format == json_format)
-		report_args_base(json_delims);
-	else
-		report_args_base(raw_delims);
+	report_args_base(stdout, delims[sing->format]);
 }

@@ -131,7 +131,7 @@ typedef struct global_args_t {
 	#define F(T, N) T##_list *N;
 	GLOBALS
 	#undef F
-	enum {raw_format, json_format} format;
+	enum {_format_raw = 0, _format_json, _nformats} format;
 } global_args_t;
 
 extern global_args_t *sing;
