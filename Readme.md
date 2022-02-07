@@ -62,9 +62,7 @@ There are some general purpose functions exposed to the user:
 
 * `void init_args (int argc, char **argv)` : This one is needed before any call to tho the internal api. It allocates the internal datastructures and initializes the api.
 
-* `void report_args ()` : To print the report. This can be called several times if needed.
-
-* `void report_args_json ()` : Like `report_args` but aoutput is formated as json.
+* `void report_args ()` : To print the report. This can be called several times if needed. If the first CL argument is `-json` this function prints the output in a sort of `json` format.
 
 * `void free_args ()` : Release all the internal's library memory and datastructures. Use this at the very end of the program.
 
