@@ -219,8 +219,8 @@ int get_rest_args(char ***rest)
 }
 
 // they should be: start, sep, pair_format, close.
-static const char *json_delims[] = {"{", ",", "%s\"%s\":%s","}"};
-static const char *raw_delims[] = {"", "\n", "%s%s: %s", "\n"};
+static const char *json_delims[] = {"{", ",", "%s\"%s\":%s","}", "[", ",", "]"};
+static const char *raw_delims[] = {"", "\n", "%s%s: %s", "\n", "", " ", ""};
 
 static
 void report_args_base(const char *delim[]) {
@@ -234,6 +234,16 @@ void report_args_base(const char *delim[]) {
 	}
 	GLOBALS
 #undef F
+
+	// Print the rest arguments as a list
+	char **rest = NULL;
+	if (get_rest_args(&rest) > 0) {
+		printf(delim[2], delim[counter++ > 0], "REST", delim[4]);
+		for (char **it = rest; *it != NULL; ++it) {
+			printf("%s\"%s\"", (it != rest ? delim[5] : ""), *it);
+		}
+		printf("%s", delim[6]);
+	}
 
 	printf("%s", delim[3]);
 }
