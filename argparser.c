@@ -17,7 +17,7 @@
 
 #include "argparser.h"
 
-global_args_t *sing = NULL;
+struct _global_args_t *sing = NULL;
 
 // List containers
 #define list_for(T)														\
@@ -169,7 +169,7 @@ void init_args(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	sing = (global_args_t *) malloc(sizeof(global_args_t));
+	sing = (struct _global_args_t *) malloc(sizeof(struct _global_args_t));
 	sing->argc = argc;
 	sing->argv = argv;
 	sing->args_it = 0;
@@ -218,13 +218,13 @@ int get_rest_args(char ***rest)
 }
 
 // these are the separator for the print function: start, sep, pair_format, close, lstart, lsep, lend.
-static const char *delims[_nformats][7] = {
+static const char *_delims[_nformats][7] = {
 	{"", "\n",    "%s%s: %s", "\n",  "", " ",  ""},
 	{"{", ",", "%s\"%s\":%s",  "}", "[", ",", "]"}
 };
 
 static
-void report_args_base(FILE *out, const char *delim[7]) {
+void _report_args_base(FILE *out, const char *delim[7]) {
 	int counter = 0;
 	char buff[MAXSTRSIZE];
 
@@ -251,5 +251,5 @@ void report_args_base(FILE *out, const char *delim[7]) {
 
 void report_args()
 {
-	report_args_base(stdout, delims[sing->format]);
+	_report_args_base(stdout, _delims[sing->format]);
 }

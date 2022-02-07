@@ -124,7 +124,7 @@ list_for(ttimer);
 	F(generic_type, reportables)				\
 	F(ttimer, ttimers)
 
-typedef struct global_args_t {
+struct _global_args_t{
 	int argc;
 	char **argv;
 	int args_it;
@@ -132,9 +132,9 @@ typedef struct global_args_t {
 	GLOBALS
 	#undef F
 	enum {_format_raw = 0, _format_json, _nformats} format;
-} global_args_t;
+};
 
-extern global_args_t *sing;
+extern struct _global_args_t *sing;
 
 // Expandable macros to add arguments to parse.
 #define F(N, T,...)														\
