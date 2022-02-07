@@ -58,17 +58,17 @@ Most of the functions that receives a `name` argument uses it to
 report the parameter in the report. The name is expected to be a
 `const char[]` with no more than 64 characters.
 
-There are a general use functions for the user:
+There are some general purpose functions exposed to the user:
 
-	* `void init_args (int argc, char **argv)` : This one is needed before any call to tho the internal api. It allocates the internal datastructures and initializes the api.
+* `void init_args (int argc, char **argv)` : This one is needed before any call to tho the internal api. It allocates the internal datastructures and initializes the api.
 
-	* `void report_args ()` : To print the report. This can be called several times if needed.
+* `void report_args ()` : To print the report. This can be called several times if needed.
 
-	* `void report_args_json ()` : Like `report_args` but aoutput is formated as json.
+* `void report_args_json ()` : Like `report_args` but aoutput is formated as json.
 
-	* `void free_args ()` : Release all the internal's library memory and datastructures. Use this at the very end of the program.
+* `void free_args ()` : Release all the internal's library memory and datastructures. Use this at the very end of the program.
 
-	* `int get_rest_args(char ***rest)` : If there are extra arguments (more than needed to parse) this function returns the number of remaining args; otherwise the function returns zero or a negative number. If the function returns a positive value and `rest` is not `NULL`; the pointer is set to the first non parsed argument so it can be used in the same way as argv.
+* `int get_rest_args(char ***rest)` : If there are extra arguments (more than needed to parse) this function returns the number of remaining args; otherwise the function returns zero or a negative number. If the function returns a positive value and `rest` is not `NULL`; the pointer is set to the first non parsed argument so it can be used in the same way as argv.
 
 The functionalities are:
 
