@@ -54,7 +54,7 @@ if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
   add_test(NAME test_6 COMMAND test_main 1 2 3 4 5 6)
   add_test(NAME test_space COMMAND test_main 1 2 3 4 5 6 "7 8")
   add_test(NAME test_9 COMMAND test_main 1 2 3 4 5 6 "7 7" 8)
-  add_test(NAME test_12 COMMAND test_main 1 2 3 4 5 6 "7 7" 8 9 10 11)
+  add_test(NAME test_rest COMMAND test_main 1 2 3 4 5 6 "7 7" 8 9 10 11)
   add_test(NAME test_json COMMAND test_main -json 1 2 3 4 5 6 7 8)
 
   get_property(TEST_NAMES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
