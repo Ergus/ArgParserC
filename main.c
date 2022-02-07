@@ -71,6 +71,15 @@ int main(int argc, char *argv[])
 	printf("# Report: r_int_1 %d\n", r_int_1);
 	assert(r_int_1 == argc);
 
+	char **rest = NULL;
+	int nrest = get_rest_args(&rest);
+	if (nrest > 0){
+		for (int i = 0; i < nrest; ++i) {
+			printf("rest[%d]: \"%s\", ", i, rest[i]);
+		}
+		printf("\n");
+	}
+
 	double r_double_1 = create_reportable_double("r_double_1", v_double_1 / o_double_1);
 	printf("# Report: r_double_1 %lf\n", r_double_1);
 	assert(r_double_1 == v_double_1 / o_double_1);

@@ -199,6 +199,16 @@ void free_args()
 	sing = NULL;
 }
 
+int get_rest_args(char ***rest)
+{
+	assert(sing != NULL);
+
+	if ((rest != NULL) && (sing->args_it < sing->argc)) {
+		*rest = &sing->argv[sing->args_it];
+	}
+	return sing->argc - sing->args_it;
+}
+
 static
 void report_args_base(const char start[], const char sep[],
                       const char formatpair[], // sep, key: value

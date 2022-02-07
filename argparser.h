@@ -150,6 +150,7 @@ void init_args(int argc, char **argv);
 void report_args();
 void report_args_json();
 void free_args();
+int get_rest_args(char ***rest);
 
 #ifdef __cplusplus
 }

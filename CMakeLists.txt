@@ -54,6 +54,7 @@ if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
   add_test(NAME test_5 COMMAND test_main 1 2 3 4 5 6)
   add_test(NAME test_6 COMMAND test_main 1 2 3 4 5 6 "7 8")
   add_test(NAME test_7 COMMAND test_main 1 2 3 4 5 6 "7 8" 9)
+  add_test(NAME test_8 COMMAND test_main 1 2 3 4 5 6 "7 8" 9 10 11 12)
 
   foreach(x RANGE 1 7)
     set_tests_properties(test_${x} PROPERTIES TIMEOUT 3)
