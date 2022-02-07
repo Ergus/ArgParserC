@@ -37,25 +37,34 @@ add_library(argparser STATIC argparser.c timer.c)
 add_executable (test_main main.c)
 target_link_libraries (test_main argparser)
 
+# All these are only for tests, not built in release mode.
 if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
 
   enable_testing()
 
-  add_test(NAME test_1 COMMAND test_main 1)
-  set_tests_properties(test_1 PROPERTIES
+  add_test(NAME test_fail_1 COMMAND test_main 1)
+  set_tests_properties(test_fail_1 PROPERTIES
     PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set v_string_1")
 
-  add_test(NAME test_2 COMMAND test_main 1 2)
-  set_tests_properties(test_2 PROPERTIES
+  add_test(NAME test_fail_2 COMMAND test_main 1 2)
+  set_tests_properties(test_fail_2 PROPERTIES
     PASS_REGULAR_EXPRESSION "^Error: no enough CL arguments to set v_double_1")
 
-  add_test(NAME test_fail1 COMMAND test_main 1 name1 2.6)
-  add_test(NAME test_fail2 COMMAND test_main 2.5 name1 2.5 5 3 name2)
+  add_test(NAME test_4 COMMAND test_main 1 name1 2.6)
   add_test(NAME test_6 COMMAND test_main 1 2 3 4 5 6)
+  add_test(NAME test_7 COMMAND test_main 2.5 name1 2.5 5 3 name2)
   add_test(NAME test_space COMMAND test_main 1 2 3 4 5 6 "7 8")
   add_test(NAME test_9 COMMAND test_main 1 2 3 4 5 6 "7 7" 8)
   add_test(NAME test_rest COMMAND test_main 1 2 3 4 5 6 "7 7" 8 9 10 11)
   add_test(NAME test_json COMMAND test_main -json 1 2 3 4 5 6 7 8)
+
+  add_test(NAME test_rest_check COMMAND test_main 1 2 3 4 5 6 "7 7" 8 9 10 11)
+  set_tests_properties(test_rest_check PROPERTIES
+    PASS_REGULAR_EXPRESSION "REST: \"9\" \"10\" \"11\"")
+
+  add_test(NAME test_json_rest_check COMMAND test_main -json 1 2 3 4 5 6 7 8 9 10 11)
+  set_tests_properties(test_json_rest_check PROPERTIES
+    PASS_REGULAR_EXPRESSION "\"REST\":\\[\"9\",\"10\",\"11\"\\]")
 
   get_property(TEST_NAMES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
   foreach(test ${TEST_NAMES})
