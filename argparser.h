@@ -68,7 +68,7 @@ void reset_timer(timer *out);
    2) format for printf without %, should not be repeated
    3) function to convert FROM char)
    4) Format to convert TO char (default printf) */
-#define TYPES										\
+#define TYPES											\
 	F(int, int, d, sscanf, "%d")						\
 	F(double, double, lg, sscanf, "%lg")				\
 	F(size_t, size_t, zu, sscanf, "%zu")				\
@@ -139,8 +139,8 @@ extern global_args_t *sing;
 // Expandable macros to add arguments to parse.
 #define F(N, T,...)														\
 	void set_gt_##N (generic_type *out, const char name[], const T val); \
-	const T create_cl_##N (const char name[]);								\
-	const T create_optional_cl_##N (const char name[], const T def);			\
+	const T create_cl_##N (const char name[]);							\
+	const T create_optional_cl_##N (const char name[], const T def);	\
 	const T create_reportable_##N (const char name[], const T value);
 	TYPES
 #undef F

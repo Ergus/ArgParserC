@@ -218,29 +218,30 @@ int get_rest_args(char ***rest)
 	return sing->argc - sing->args_it;
 }
 
+// they should be: start, sep, pair_format, close.
+static const char *json_delims[] = {"{", ",", "%s\"%s\":%s","}"};
+static const char *raw_delims[] = {"", "\n", "%s%s: %s", "\n"};
+
 static
-void report_args_base(const char start[], const char sep[],
-                      const char formatpair[], // sep, key: value
-                      const char close[]
-) {
+void report_args_base(const char *delim[]) {
 	int counter = 0;
 	char buff[MAXSTRSIZE];
 
 #define F(T, N)															\
 	for (const T *it = begin_##T##_list(sing->N); it != end_##T##_list(sing->N); ++it) { \
 		snprintf_##T(buff, MAXSTRSIZE, it);								\
-		printf(formatpair, (counter++ ? sep : start), it->name, buff);	\
+		printf(delim[2], delim[counter++ > 0], it->name, buff);	\
 	}
 	GLOBALS
 #undef F
 
-	printf("%s", close);
+	printf("%s", delim[3]);
 }
 
 void report_args()
 {
 	if (sing->format == json_format)
-		report_args_base("{", ",", "%s\"%s\":%s","}");
+		report_args_base(json_delims);
 	else
-		report_args_base("", "\n", "%s%s: %s", "\n");
+		report_args_base(raw_delims);
 }
