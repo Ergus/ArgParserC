@@ -41,30 +41,32 @@ int main(int argc, char *argv[])
 	const char *v_string_1 = create_cl_string ("v_string_1");
 	double v_double_1 = create_cl_double ("v_double_1");
 
+	int it = 1 + (strcmp(argv[1],"-json") == 0);
+
 	printf("# Read mandatory args: %d %s %lf\n", v_int_1, v_string_1, v_double_1);
-	assert(v_int_1 == atoi(argv[1]));
-	assert(strcmp(v_string_1, argv[2]) == 0);
-	assert(v_double_1 == atof(argv[3]));
+	assert(v_int_1 == atoi(argv[it++]));
+	assert(strcmp(v_string_1, argv[it++]) == 0);
+	assert(v_double_1 == atof(argv[it++]));
 
 	int o_int_1 = create_optional_cl_int ("o_int_1", -1);
 	printf("# Read: o_int_1 %d\n", o_int_1);
-	assert(o_int_1 == ((argc > 4 ? atoi(argv[4]) : -1)));
+	assert(o_int_1 == ((argc > 4 ? atoi(argv[it++]) : -1)));
 
 	double o_double_1 = create_optional_cl_double ("o_double_1", 0.5);
 	printf("# Read: o_double_1 %lf\n", o_double_1);
-	assert(o_double_1 == ((argc > 5 ? atof(argv[5]) : 0.5)));
+	assert(o_double_1 == ((argc > 5 ? atof(argv[it++]) : 0.5)));
 
 	const char *o_string_1 = create_optional_cl_string ("o_string_1", NULL);
 	printf("# Read: o_string_1 %s\n", o_string_1);
-	assert((argc > 6 ? strcmp(o_string_1, argv[6]) == 0 : o_string_1 == NULL));
+	assert((argc > 6 ? strcmp(o_string_1, argv[it++]) == 0 : o_string_1 == NULL));
 
 	const char *o_string_2 = create_optional_cl_string ("o_string_2", "");
 	printf("# Read: o_string_2 %s\n", o_string_2);
-	assert(strcmp(o_string_2, ((argc > 7 ? argv[7] : ""))) == 0);
+	assert(strcmp(o_string_2, ((argc > 7 ? argv[it++] : ""))) == 0);
 
 	const char *o_string_3 = create_optional_cl_string ("o_string_3", "opt1 opt2");
 	printf("# Read: o_string_3 %s\n", o_string_3);
-	assert(strcmp(o_string_3, ((argc > 8 ? argv[8] : "opt1 opt2"))) == 0);
+	assert(strcmp(o_string_3, ((argc > 8 ? argv[it++] : "opt1 opt2"))) == 0);
 
 	timer t1 = create_timer("timer_1");
 	int r_int_1 = create_reportable_int("r_int_1", argc);
@@ -122,8 +124,6 @@ int main(int argc, char *argv[])
 
 	printf("# Reporting args\n");
 	report_args();
-
-	report_args_json();
 
 	printf("\n# Call free args\n");
 	free_args ();

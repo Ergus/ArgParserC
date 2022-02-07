@@ -185,6 +185,15 @@ void init_args(int argc, char **argv)
 	init_ttimer_list (sing->ttimers, MAXLIST);
 
 	create_cl_string ("Executable");
+
+	// if first argument is "-json" the report will be printed in json format
+	// this could be improved latter but I want to keep it simple.
+	if ((sing->argc > 1) && (strcmp(sing->argv[1], "-json") == 0)) {
+		sing->format = json_format;
+		sing->args_it++;
+	} else {
+		sing->format = raw_format;
+	}
 }
 
 void free_args()
@@ -230,10 +239,8 @@ void report_args_base(const char start[], const char sep[],
 
 void report_args()
 {
-	report_args_base("", "\n", "%s%s: %s", "\n");
-}
-
-void report_args_json()
-{
-	report_args_base("{", ",", "%s\"%s\":%s","}");
+	if (sing->format == json_format)
+		report_args_base("{", ",", "%s\"%s\":%s","}");
+	else
+		report_args_base("", "\n", "%s%s: %s", "\n");
 }
