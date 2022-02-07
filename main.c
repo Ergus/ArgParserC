@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 	char **rest = NULL;
 	int nrest = get_rest_args(&rest);
 	if (nrest > 0){
+		printf("# ");
 		for (int i = 0; i < nrest; ++i) {
 			printf("rest[%d]: \"%s\", ", i, rest[i]);
 		}
