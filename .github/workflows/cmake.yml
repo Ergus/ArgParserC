@@ -3,6 +3,7 @@ name: Build and Test on Linux Mac and Windows
 on:
   push:
     branches: [ master ]
+    tags: "v*"
 
 env:
   BUILD_TYPE: Debug
