@@ -42,7 +42,11 @@ extern "C" {
 #define MAXNAME 64
 #define MAXSTRSIZE 256
 
-// timer
+void getTime(struct timespec *ts);
+double getNS(const struct timespec *ts);
+struct timespec diffTime(const struct timespec *t1, const struct timespec *t2);
+
+// ttimer
 typedef struct ttimer {
 	char name[MAXNAME];
 	struct timespec _startTime;
@@ -50,6 +54,7 @@ typedef struct ttimer {
 	struct timespec _accumulated;
 } ttimer;
 
+// time
 typedef struct timer {
 	size_t tidx;
 } timer;

@@ -39,7 +39,6 @@ int clock_gettime(int _ignore, struct timespec *spec)       //C-file part
 #endif // _MSC_VER
 
 // Timer
-static
 void getTime(struct timespec *ts)
 {
 	if (clock_gettime(CLOCK_MONOTONIC, ts)) {
@@ -49,12 +48,25 @@ void getTime(struct timespec *ts)
 	}
 }
 
-static
 double getNS(const struct timespec *ts)
 {
 	return ts->tv_sec * 1.0E9 + ts->tv_nsec;
 }
 
+struct timespec diffTime(const struct timespec *t1, const struct timespec *t2)
+{
+	assert(t2->tv_sec >= t1->tv_sec);
+	struct timespec ret;
+
+	if (t2->tv_nsec < t1->tv_nsec) {
+		ret.tv_nsec = 1000000000L + t2->tv_nsec - t1->tv_nsec;
+		ret.tv_sec = (t2->tv_sec - 1 - t1->tv_sec);
+	} else {
+		ret.tv_nsec = (t2->tv_nsec - t1->tv_nsec);
+		ret.tv_sec = (t2->tv_sec - t1->tv_sec);
+	}
+	return ret;
+}
 
 // ttimer functions (Specializations).
 static
@@ -65,11 +77,13 @@ void reset_ttimer(ttimer *out)
 	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
 }
 
+static
 int snprintf_ttimer(char out[], size_t maxsize, const ttimer *in)
 {
 	return snprintf(out, maxsize, "%g", getNS(&in->_accumulated));
 }
 
+static
 void copy_ttimer(ttimer *out, const ttimer *in)
 {
 	*out = *in;
@@ -86,17 +100,10 @@ void stop_ttimer(ttimer *out)
 {
 	getTime(&out->_endTime);
 
-	const struct timespec *startTime = &out->_startTime;
-	const struct timespec *endTime = &out->_endTime;
-	struct timespec *accumulated = &out->_accumulated;
+	struct timespec diff =  diffTime(&out->_startTime, &out->_endTime);
 
-	if (endTime->tv_nsec < startTime->tv_nsec) {
-		accumulated->tv_nsec += 1000000000L + endTime->tv_nsec - startTime->tv_nsec;
-		accumulated->tv_sec += (endTime->tv_sec - 1 - startTime->tv_sec);
-	} else {
-		accumulated->tv_nsec += (endTime->tv_nsec - startTime->tv_nsec);
-		accumulated->tv_sec += (endTime->tv_sec - startTime->tv_sec);
-	}
+	out->_accumulated.tv_nsec += diff.tv_nsec;
+	out->_accumulated.tv_sec += diff.tv_sec;
 }
 
 // timer functions (public)
