@@ -77,13 +77,12 @@ void reset_ttimer(ttimer *out)
 	out->_accumulated.tv_nsec = 0; out->_accumulated.tv_sec = 0;
 }
 
-static
 int snprintf_ttimer(char out[], size_t maxsize, const ttimer *in)
 {
 	return snprintf(out, maxsize, "%g", getNS(&in->_accumulated));
 }
 
-static
+
 void copy_ttimer(ttimer *out, const ttimer *in)
 {
 	*out = *in;
