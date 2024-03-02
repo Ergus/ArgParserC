@@ -21,10 +21,6 @@ if ((NOT CMAKE_BUILD_TYPE MATCHES "^Rel") AND (CMAKE_C_COMPILER_ID STREQUAL "GNU
   option(WITH_COVERAGE "Generate coverage files:" false)
 endif ()
 
-if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-  add_definitions(argparser PUBLIC _CRT_SECURE_NO_WARNINGS)
-endif()
-
 if (WITH_COVERAGE)
   add_compile_options(--coverage)
   add_link_options(--coverage)
@@ -33,12 +29,17 @@ endif()
 
 # Important starts here.
 add_library(argparser STATIC argparser.c timer.c)
+if (CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    target_compile_definitions(argparser PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
 
 add_executable (test_c main.c)
 target_link_libraries (test_c argparser)
 
 add_executable (test_cpp main.cpp)
 target_link_libraries (test_cpp argparser)
+target_compile_features(test_cpp PUBLIC cxx_std_17)
 
 # All these are only for tests, not built in release mode.
 if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")

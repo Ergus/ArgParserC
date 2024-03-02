@@ -21,19 +21,23 @@ jobs:
         config:
         - {
             os: ubuntu-latest,
-            cc: "gcc"
+            cc: "gcc",
+            cxx: "g++"
           }
         - {
             os: ubuntu-latest,
-            cc: "clang"
+            cc: "clang",
+            cxx: "clang++"
           }
         - {
             os: macos-latest,
-            cc: "clang"
+            cc: "clang",
+            cxx: "clang++"
           }
         - {
             os: windows-latest,
-            cc: "cl"
+            cc: "cl",
+            cxx: "cl"
           }
 
     steps:
@@ -58,6 +62,7 @@ jobs:
     needs: build
     env:
       CC: gcc
+      CXX: g++
     timeout-minutes: 5
     strategy:
       fail-fast: false
