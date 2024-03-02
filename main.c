@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
 {
 	init_args (argc, argv);
 
+	// Mandatory
 	int v_int_1 = create_cl_int ("v_int_1");
 	const char *v_string_1 = create_cl_string ("v_string_1");
 	double v_double_1 = create_cl_double ("v_double_1");
