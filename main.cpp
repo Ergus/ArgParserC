@@ -114,9 +114,9 @@ int main(int argc, char *argv[])
 	// assert(diff_time_reset == 0.);
 
 	std::cout << "# Reporting args" << std::endl;
-	report_args();
+	argparser::report<>();
 
 	std::cout << "\n# Call free args" << std::endl;
-	free_args();
+	argparser::free();
 	return 0;
 }

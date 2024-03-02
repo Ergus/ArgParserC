@@ -175,3 +175,9 @@ int main(int argc, char *argv[])
 ```
 
 A more complete use example is in the `main.c`
+
+# C++ bindings and example
+
+This project also includes some C++ bindings wrapping the functions
+with templates to expose the basic functionalities to C++. This is a
+clear example on **how macros and templates should NEVER mix**.

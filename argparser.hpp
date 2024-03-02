@@ -18,9 +18,12 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 
 namespace {
-#include "argparser.h"
+	#include "argparser.h"
+
+	using string = std::string;
 
 	template <typename T>
 	struct trait{
@@ -39,41 +42,51 @@ namespace {
 			return in.c_str();
 		}
 	};
+
+	template <typename T, bool cl>
+	class reportable_t {
+		T _value;
+
+	public:
+
+		template<bool B2 = cl, typename std::enable_if_t<B2, int> = 0>
+		explicit reportable_t(const std::string &name)
+		{
+			#define F(N,...)										\
+			if constexpr (std::is_same<T, N>::value == true)		\
+				_value = N(create_cl_##N(name.c_str()));
+			TYPES
+			#undef F
+		}
+
+		reportable_t(const std::string &name, const T value)
+		{
+			if constexpr (cl) {
+				#define F(N,...)														\
+					if constexpr (std::is_same<T, N>::value == true)	\
+						_value = N(create_optional_cl_##N(name.c_str(), trait<T>::convert(value)));
+				TYPES
+				#undef F
+			} else {
+				#define F(N,...)														\
+					if constexpr (std::is_same<T, N>::value == true)	\
+						_value = N(create_reportable_##N(name.c_str(), trait<T>::convert(value)));
+				TYPES
+				#undef F
+			}
+		}
+
+		operator T() { return _value; }
+	};
 }
 
 namespace argparser {
 
-	using string = std::string;
+	template <typename T>
+	using cl = reportable_t<T, true>;
 
 	template <typename T>
-	T cl(const std::string &name)
-	{
-		#define F(N,...)											 \
-			if constexpr (std::is_same<T, N>::value == true)		\
-				return N(create_cl_##N(name.c_str()));
-			TYPES
-		#undef F
-	}
-
-	template <typename T>
-	T cl(const std::string &name, const T value)
-	{
-		#define F(N,...)												\
-			if constexpr (std::is_same<T, N>::value == true)			\
-				return N(create_optional_cl_##N(name.c_str(), trait<T>::convert(value)));
-			TYPES
-		#undef F
-	}
-
-	template <typename T>
-	T reportable(const std::string &name, const T value)
-	{
-		#define F(N,...)									\
-			if constexpr (std::is_same<T, N>::value == true) \
-				return N(create_reportable_##N(name.c_str(), trait<T>::convert(value)));
-			TYPES
-		#undef F
-	}
+	using reportable = reportable_t<T, false>;
 
 	void init(int argc, char **argv) {
 		init_args(argc, argv);
