@@ -61,7 +61,6 @@ typedef struct timer {
 
 timer create_timer(const char *name);
 double getNS_timer(const timer *in);
-void print_timer(const timer *in);
 void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);

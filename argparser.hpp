@@ -27,8 +27,7 @@ namespace {
 
 	template <typename T>
 	struct trait{
-		using type = T;
-		static type convert(const T& in)
+		static T convert(const T& in)
 		{
 			return in;
 		}
@@ -36,7 +35,6 @@ namespace {
 
 	template <>
 	struct trait<std::string>{
-		using type = const char*;
 		static const char* convert(const std::string& in)
 		{
 			return in.c_str();
@@ -78,6 +76,7 @@ namespace {
 
 		operator T() { return _value; }
 	};
+
 }
 
 namespace argparser {
@@ -107,4 +106,19 @@ namespace argparser {
 	int get_rest(char **rest) {
 		return get_rest_args(&rest);
 	}
+
+	class time {
+		timer t;
+
+	public:
+		explicit time(const std::string& name)
+			: t(create_timer(name.c_str()))
+		{}
+
+		double getNS() const { return getNS_timer(&t); }
+		void start() { start_timer(&t); }
+		void stop() { stop_timer(&t); }
+		void reset() { reset_timer(&t); }
+	};
+
 };

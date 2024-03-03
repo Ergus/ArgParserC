@@ -19,6 +19,12 @@
 #include <iostream>
 #include "argparser.hpp"
 
+#ifdef _MSC_VER
+#include <Windows.h>
+#define sleep(X) Sleep(X * 1000)
+#else
+#include <unistd.h>
+#endif
 
 const std::string global_string = "Value for reportable in global variable";
 
@@ -63,20 +69,20 @@ int main(int argc, char *argv[])
 	std::cout << "# Read: o_string_3 " << o_string_3 << std::endl;
 	assert(o_string_3 == ((argc > 8 ? argv[it++] : "opt1 opt2")));
 
-	// timer t1 = create_timer("timer_1");
-	// int r_int_1 = create_reportable_int("r_int_1", argc);
-	// printf("# Report: r_int_1 %d\n", r_int_1);
-	// assert(r_int_1 == argc);
+	argparser::time t1("timer_1");
+	int r_int_1 = argparser::reportable<int>("r_int_1", argc);
+	printf("# Report: r_int_1 %d\n", r_int_1);
+	assert(r_int_1 == argc);
 
-	// char **rest = NULL;
-	// int nrest = get_rest_args(&rest);
-	// if (nrest > 0){
-	// 	printf("# ");
-	// 	for (int i = 0; i < nrest; ++i) {
-	// 		printf("rest[%d]: \"%s\", ", i, rest[i]);
-	// 	}
-	// 	printf("\n");
-	// }
+	char **rest = NULL;
+	int nrest = get_rest_args(&rest);
+	if (nrest > 0){
+		printf("# ");
+		for (int i = 0; i < nrest; ++i) {
+			printf("rest[%d]: \"%s\", ", i, rest[i]);
+		}
+		printf("\n");
+	}
 
 	double r_double_1 = argparser::reportable<double>("r_double_1", v_double_1 / o_double_1);
 	std::cout << "# Report: r_double_1 " << r_double_1 << std::endl;
@@ -94,29 +100,30 @@ int main(int argc, char *argv[])
 	std::cout << "# Report: r_string_3 " << r_string_3 << std::endl;
 	assert(r_string_3 == global_string);
 
-	// timer t2 = create_timer("timer_2"); // New timer to trigger realloc
-	// printf("# Start sleep\n");
-	// sleep(1);
-	// printf("# End sleep\n");
-	// stop_timer(&t2);
+	argparser::time t2("timer_2"); // New timer to trigger realloc
+	std::cout << "# Start sleep" << std::endl;
+	sleep(1);
+	std::cout << "# End sleep\n" << std::endl;
+	t2.stop();
 
-	// const double diff_time1 = getNS_timer(&t1);
-	// printf("# Timer: T1 %lf\n", diff_time1);
-	// assert(diff_time1 == 0.);
+	const double diff_time1 = t1.getNS();
+	printf("# Timer: T1 %lf\n", diff_time1);
+	assert(diff_time1 == 0.);
 
-	// const double diff_time2 = getNS_timer(&t2);
-	// printf("# Times: T2 %lf\n", diff_time2);
-	// assert(diff_time2 >= 1E9);
+	const double diff_time2 = t2.getNS();
+	printf("# Times: T2 %lf\n", diff_time2);
+	assert(diff_time2 >= 1E9);
 
-	// reset_timer(&t2);
-	// const double diff_time_reset = getNS_timer(&t2);
-	// printf("# Times: T2 (reset) %lf\n", diff_time_reset);
-	// assert(diff_time_reset == 0.);
+	t2.reset();
+	const double diff_time_reset = t2.getNS();
+	printf("# Times: T2 (reset) %lf\n", diff_time_reset);
+	assert(diff_time_reset == 0.);
 
 	std::cout << "# Reporting args" << std::endl;
 	argparser::report<>();
 
 	std::cout << "\n# Call free args" << std::endl;
+
 	argparser::free();
 	return 0;
 }
