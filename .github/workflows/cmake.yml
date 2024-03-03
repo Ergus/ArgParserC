@@ -19,26 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            os: ubuntu-latest,
-            cc: "gcc",
-            cxx: "g++"
-          }
-        - {
-            os: ubuntu-latest,
-            cc: "clang",
-            cxx: "clang++"
-          }
-        - {
-            os: macos-latest,
-            cc: "clang",
-            cxx: "clang++"
-          }
-        - {
-            os: windows-latest,
-            cc: "cl",
-            cxx: "cl"
-          }
+        - {os: ubuntu-latest, cc: "gcc", cxx: "g++"}
+        - {os: ubuntu-latest, cc: "clang", cxx: "clang++"}
+        - {os: macos-latest, cc: "clang", cxx: "clang++"}
+        - {os: windows-latest, cc: "cl", cxx: "cl"}
 
     steps:
       - uses: actions/checkout@v2
