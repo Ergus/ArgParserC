@@ -30,7 +30,7 @@ const std::string global_string = "Value for reportable in global variable";
 
 int main(int argc, char *argv[])
 {
-	init_args (argc, argv);
+	argparser::init(argc, argv);
 
 	int v_int_1 = argparser::cl<int>("v_int_1");
 	std::string v_string_1 = argparser::cl<std::string>("v_string_1");
