@@ -19,12 +19,20 @@
 
 #include <string>
 #include <type_traits>
+#include "argparser.h"
+
 
 namespace {
-	#include "argparser.h"
 
 	using string = std::string;
 
+	/**
+	   These specialized traits are needed to handle the strings properly
+
+	   Remember that C strings are very problematic to handle securely and the 
+	   C backed we have uses several tricks to manage them. So, we need the
+	   special traits in order to have a latter simpler code.
+	*/
 	template <typename T>
 	struct trait{
 		static T convert(const T& in)
@@ -41,6 +49,15 @@ namespace {
 		}
 	};
 
+	/**
+	   C++ wrapper template class for reportables
+
+	   This includes the command line arguments and explicit reportables.
+	   We use a dirty macro trick to generate specialized code that calls the
+	   right C backend.
+	   This is the best example of how macros+templates should NEVER be used
+	   together.
+	*/
 	template <typename T, bool cl>
 	class reportable_t {
 		T _value;
@@ -76,7 +93,6 @@ namespace {
 
 		operator T() { return _value; }
 	};
-
 }
 
 namespace argparser {
