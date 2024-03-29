@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.21)
 
 project(ArgParserC LANGUAGES C CXX)
 
@@ -41,8 +41,10 @@ add_executable (test_cpp main.cpp)
 target_link_libraries (test_cpp argparser)
 target_compile_features(test_cpp PUBLIC cxx_std_17)
 
-# All these are only for tests, not built in release mode.
-if (NOT CMAKE_BUILD_TYPE MATCHES "^Rel")
+# All these are only for tests:
+# not built in release mode.
+# not build when used as a submodule
+if ((NOT CMAKE_BUILD_TYPE MATCHES "^Rel") AND (PROJECT_IS_TOP_LEVEL))
 
     enable_testing()
 
