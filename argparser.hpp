@@ -20,7 +20,7 @@
 #include <string>
 #include <type_traits>
 #include "argparser.h"
-
+#include <vector>
 
 namespace {
 
@@ -108,19 +108,30 @@ namespace argparser {
 	}
 
 	template<bool json = false>
-	void report() {
+	void report()
+	{
 		if constexpr(json)
 			report_args_json();
 		else
 			report_args();
 	}
 
-	void free() {
+	void free()
+	{
 		free_args();
 	}
 
-	int get_rest(char **rest) {
-		return get_rest_args(&rest);
+	std::vector<std::string> get_rest()
+	{
+		char **rest;
+		int nrest = get_rest_args(&rest);
+
+		std::vector<std::string> result(nrest);
+
+		for(int i = 0; i < nrest; ++i)
+			result[i] = std::string(rest[i]);
+
+		return result;
 	}
 
 	class time {

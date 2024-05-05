@@ -71,17 +71,16 @@ int main(int argc, char *argv[])
 
 	argparser::time t1("timer_1");
 	int r_int_1 = argparser::reportable<int>("r_int_1", argc);
-	printf("# Report: r_int_1 %d\n", r_int_1);
+	std::cout <<  "# Report: r_int_1 " << r_int_1 << std::endl;
 	assert(r_int_1 == argc);
 
-	char **rest = NULL;
-	int nrest = get_rest_args(&rest);
-	if (nrest > 0){
-		printf("# ");
-		for (int i = 0; i < nrest; ++i) {
-			printf("rest[%d]: \"%s\", ", i, rest[i]);
+	std::vector<std::string> rest = argparser::get_rest();
+	if (rest.size() > 0){
+		std::cout <<  "# ";
+		for (int i = 0; i < rest.size(); ++i) {
+			std::cout << "rest[" << i << "]: \"" << rest[i] << "\", ";
 		}
-		printf("\n");
+		std::cout << std::endl;
 	}
 
 	double r_double_1 = argparser::reportable<double>("r_double_1", v_double_1 / o_double_1);
@@ -107,16 +106,16 @@ int main(int argc, char *argv[])
 	t2.stop();
 
 	const double diff_time1 = t1.getNS();
-	printf("# Timer: T1 %lf\n", diff_time1);
+	std::cout << "# Timer: T1 " << diff_time1 << std::endl;
 	assert(diff_time1 == 0.);
 
 	const double diff_time2 = t2.getNS();
-	printf("# Times: T2 %lf\n", diff_time2);
+	std::cout << "# Timer: T2 " << diff_time2 << std::endl;
 	assert(diff_time2 >= 1E9);
 
 	t2.reset();
 	const double diff_time_reset = t2.getNS();
-	printf("# Times: T2 (reset) %lf\n", diff_time_reset);
+	std::cout << "# Times: T2 (reset) " << diff_time_reset << std::endl;
 	assert(diff_time_reset == 0.);
 
 	std::cout << "# Reporting args" << std::endl;
