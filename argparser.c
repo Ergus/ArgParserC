@@ -187,11 +187,25 @@ void init_args(int argc, char **argv)
 	create_cl_string ("Executable");
 
 	sing->format = _format_raw;
-	// if first argument is "-json" the report will be printed in json format
-	// this could be improved latter but I want to keep it simple.
-	if ((sing->argc > 1) && (strcmp(sing->argv[1], "-json") == 0)) {
-		sing->format = _format_json;
-		sing->args_it++;
+	sing->time_format = _tformat_nanos;
+	
+	// if first 2 arguments are "-json or -milis" the report will be
+	// printed in json format or the the times will be printed in
+	// miliseconds this could be improved latter but I want to keep it
+	// simple.
+	for (int i = 1; i < 3; ++i) {
+		if (sing->argc > i) {
+
+			if (strcmp(sing->argv[i], "-json") == 0) {
+				sing->format = _format_json;
+				sing->args_it++;
+			} else if (strcmp(sing->argv[i], "-millis") == 0) {
+				sing->time_format = _tformat_millis;
+				sing->args_it++;
+			} else {
+				break;
+			}
+		}
 	}
 }
 

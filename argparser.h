@@ -136,6 +136,7 @@ struct _global_args_t{
 	GLOBALS
 	#undef F
 	enum {_format_raw = 0, _format_json, _nformats} format;
+	enum {_tformat_nanos = 0, _tformat_millis, _ntformats} time_format;
 };
 
 extern struct _global_args_t *sing;
@@ -153,7 +154,6 @@ extern struct _global_args_t *sing;
 /*! General functions. */
 void init_args(int argc, char **argv);
 void report_args();
-void report_args_json();
 void free_args();
 int get_rest_args(char ***rest);
 

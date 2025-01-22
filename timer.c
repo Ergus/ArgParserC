@@ -79,7 +79,15 @@ void reset_ttimer(ttimer *out)
 
 int snprintf_ttimer(char out[], size_t maxsize, const ttimer *in)
 {
-	return snprintf(out, maxsize, "%g", getNS(&in->_accumulated));
+	double tmp = getNS(&in->_accumulated);
+	switch (sing->time_format) {
+	case _tformat_nanos:
+		return snprintf(out, maxsize, "%g ns", tmp);
+	case _tformat_millis:
+		return snprintf(out, maxsize, "%g ms", tmp / 10E6);
+	default:
+		perror("Internal argparser error. Wrong time format");
+	}
 }
 
 
@@ -110,7 +118,6 @@ double getNS_timer(const timer *in)
 {
 	return getNS(&get_ttimer_list(sing->ttimers, in->tidx)->_accumulated);
 }
-
 
 void reset_timer(timer *out)
 {

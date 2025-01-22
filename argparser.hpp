@@ -110,10 +110,7 @@ namespace argparser {
 	template<bool json = false>
 	void report()
 	{
-		if constexpr(json)
-			report_args_json();
-		else
-			report_args();
+		report_args();
 	}
 
 	void free()
