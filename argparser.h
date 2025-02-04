@@ -64,6 +64,7 @@ double getNS_timer(const timer *in);
 void start_timer(timer *out);
 void stop_timer(timer *out);
 void reset_timer(timer *out);
+int snprintf_timer(const timer *in, char buffer[], size_t maxsize);
 
 #define COPYPTR(IN,IGNORE,OUT) *OUT = IN
 

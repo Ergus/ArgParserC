@@ -124,11 +124,16 @@ void reset_timer(timer *out)
 	reset_ttimer(get_ttimer_list(sing->ttimers, out->tidx));
 }
 
-
 void start_timer(timer *out)
 {
 	ttimer *reportable = get_ttimer_list(sing->ttimers, out->tidx);
 	start_ttimer(reportable);
+}
+
+int snprintf_timer(const timer *in, char out[], size_t maxsize)
+{
+	ttimer *reportable = get_ttimer_list(sing->ttimers, in->tidx);
+	return snprintf_ttimer(out, maxsize, reportable);
 }
 
 // Function to create timer.

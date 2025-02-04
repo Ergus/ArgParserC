@@ -125,6 +125,10 @@ The functionalities are:
 	* `getNS_timer(const timer *in)` : Returns the number of
       nano-seconds the timer has measured (accumulated or stored).
 
+	* `snprintf_timer(const timer *out, char buffer[], size_t
+      maxsize)` : Convert the timer accumulated time into a string
+      with units written to buffer[].
+
 ### TYPES
 
 For now only 4 different types are supported: `int`, `double`,
