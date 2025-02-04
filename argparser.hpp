@@ -148,7 +148,7 @@ namespace argparser {
 		{
 			char buffer[256];
 			snprintf_timer(&self.t, buffer, 255);
-			os << buffer;
+			os << std::string(buffer);
 			return os;
 		}
 	};
