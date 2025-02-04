@@ -124,6 +124,12 @@ int main(int argc, char *argv[])
 	printf("# Times: T2 (reset) %lf\n", diff_time_reset);
 	assert(diff_time_reset == 0.);
 
+	// Test the timer string conversion
+	char buffer[256];
+	snprintf_timer(&t2, buffer, 255);
+	printf("Printing reset timer is: %s\n", buffer);
+	strcmp(buffer, "0 ns");
+
 	printf("# Reporting args\n");
 	report_args();
 

@@ -143,6 +143,14 @@ namespace argparser {
 		void start() { start_timer(&t); }
 		void stop() { stop_timer(&t); }
 		void reset() { reset_timer(&t); }
+
+		friend std::ostream& operator<<(std::ostream& os, const time& self)
+		{
+			char buffer[256];
+			snprintf_timer(&self.t, buffer, 255);
+			os << buffer;
+			return os;
+		}
 	};
 
 };

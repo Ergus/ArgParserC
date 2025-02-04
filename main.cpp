@@ -118,6 +118,8 @@ int main(int argc, char *argv[])
 	std::cout << "# Times: T2 (reset) " << diff_time_reset << std::endl;
 	assert(diff_time_reset == 0.);
 
+	std::cout << "Printing reset timer is: " << t2 << std::endl;
+
 	std::cout << "# Reporting args" << std::endl;
 	argparser::report<>();
 
