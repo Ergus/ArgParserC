@@ -36,7 +36,9 @@ int main(int argc, char *argv[])
 	std::string v_string_1 = argparser::cl<std::string>("v_string_1");
 	double v_double_1 = argparser::cl<double>("v_double_1");
 
-	int it = 1 + (std::string(argv[1]) == "-json");
+	int it = 1 + (std::string(argv[1]) == "-json" || std::string(argv[1]) == "-millis");
+	if (it > 1)
+		it += (std::string(argv[2]) == "-json" || std::string(argv[2]) == "-millis");
 
 	std::cout << "# Read mandatory args: "
 	          << v_int_1 << " "

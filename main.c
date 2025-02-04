@@ -42,7 +42,9 @@ int main(int argc, char *argv[])
 	const char *v_string_1 = create_cl_string ("v_string_1");
 	double v_double_1 = create_cl_double ("v_double_1");
 
-	int it = 1 + (strcmp(argv[1],"-json") == 0);
+	int it = 1 + ((strcmp(argv[1],"-json") == 0) || (strcmp(argv[1],"-millis") == 0));
+	if (it > 1)
+		it += ((strcmp(argv[2],"-json") == 0) || (strcmp(argv[2],"-millis") == 0));
 
 	printf("# Read mandatory args: %d %s %lf\n", v_int_1, v_string_1, v_double_1);
 	assert(v_int_1 == atoi(argv[it++]));
@@ -128,7 +130,8 @@ int main(int argc, char *argv[])
 	char buffer[256];
 	snprintf_timer(&t2, buffer, 255);
 	printf("Printing reset timer is: %s\n", buffer);
-	strcmp(buffer, "0 ns");
+	assert(buffer[0] == '0');
+	assert(buffer[1] == ' ');
 
 	printf("# Reporting args\n");
 	report_args();

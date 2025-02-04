@@ -64,7 +64,11 @@ if ((NOT CMAKE_BUILD_TYPE MATCHES "^Rel") AND (PROJECT_IS_TOP_LEVEL))
 	add_test(NAME ${executable}_space COMMAND ${executable} 1 2 3 4 5 6 "7 8")
 	add_test(NAME ${executable}_9 COMMAND ${executable} 1 2 3 4 5 6 "7 7" 8)
 	add_test(NAME ${executable}_rest COMMAND ${executable} 1 2 3 4 5 6 "7 7" 8 9 10 11)
+
 	add_test(NAME ${executable}_json COMMAND ${executable} -json 1 2 3 4 5 6 7 8)
+	add_test(NAME ${executable}_millis COMMAND ${executable} -millis 1 2 3 4 5 6 7 8)
+	add_test(NAME ${executable}_json_millis COMMAND ${executable} -json -millis 1 2 3 4 5 6 7 8)
+	add_test(NAME ${executable}_millis_json COMMAND ${executable} -millis -json 1 2 3 4 5 6 7 8)
 
 	add_test(NAME ${executable}_rest_check COMMAND ${executable} 1 2 3 4 5 6 "7 7" 8 9 10 11)
 	set_tests_properties(${executable}_rest_check PROPERTIES
