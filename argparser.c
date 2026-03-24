@@ -24,6 +24,10 @@ struct _global_args_t *sing = NULL;
 	void init_##T##_list (T##_list *in, size_t max_size)				\
 	{																	\
 		in->list = (T *) malloc(max_size * sizeof (T));					\
+		if (!in->list) {												\
+			fprintf(stderr, "Error: malloc failed in init_" #T "_list\n"); \
+			exit(EXIT_FAILURE);											\
+		}																\
 		in->max_size = max_size;										\
 		in->count = 0;													\
 	}																	\
@@ -35,14 +39,13 @@ struct _global_args_t *sing = NULL;
 			dbprintf ("Reallocating array to %zu\n", in->max_size);		\
 																		\
 			T *tmp = (T *) malloc(in->max_size * sizeof(T));		\
+			if (!tmp)													\
+				return NULL;											\
 			for (size_t i = 0; i < in->count; ++i){					\
 				tmp[i] = in->list[i];									\
 			}															\
 			free(in->list);												\
 			in->list = tmp;												\
-																		\
-			if (!in->list)												\
-				return NULL;											\
 		}																\
 																		\
 		in->list[in->count] = *value;									\
@@ -170,15 +173,31 @@ void init_args(int argc, char **argv)
 	}
 
 	sing = (struct _global_args_t *) malloc(sizeof(struct _global_args_t));
+	if (!sing) {
+		fprintf(stderr, "Error: malloc failed for global args\n");
+		exit(EXIT_FAILURE);
+	}
 	sing->argc = argc;
 	sing->argv = argv;
 	sing->args_it = 0;
 	sing->args_list =
 		(generic_type_list *) malloc(sizeof(generic_type_list));
+	if (!sing->args_list) {
+		fprintf(stderr, "Error: malloc failed for args_list\n");
+		exit(EXIT_FAILURE);
+	}
 	sing->reportables =
 		(generic_type_list *) malloc(sizeof(generic_type_list));
+	if (!sing->reportables) {
+		fprintf(stderr, "Error: malloc failed for reportables\n");
+		exit(EXIT_FAILURE);
+	}
 	sing->ttimers =
 		(ttimer_list *) malloc(sizeof(ttimer_list));
+	if (!sing->ttimers) {
+		fprintf(stderr, "Error: malloc failed for ttimers\n");
+		exit(EXIT_FAILURE);
+	}
 
 	init_generic_type_list (sing->args_list, MAXLIST);
 	init_generic_type_list (sing->reportables, MAXLIST);
