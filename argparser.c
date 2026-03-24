@@ -34,8 +34,8 @@ struct _global_args_t *sing = NULL;
 			in->max_size *= 2;											\
 			dbprintf ("Reallocating array to %zu\n", in->max_size);		\
 																		\
-			T *tmp = (T *) malloc(2 * in->max_size * sizeof(T));		\
-			for (size_t i = 0; i < in->max_size; ++i){					\
+			T *tmp = (T *) malloc(in->max_size * sizeof(T));		\
+			for (size_t i = 0; i < in->count; ++i){					\
 				tmp[i] = in->list[i];									\
 			}															\
 			free(in->list);												\
